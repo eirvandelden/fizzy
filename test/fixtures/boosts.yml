@@ -1,25 +1,15 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  body: ""
-  creator: jz
+logo_one:
   bubble: logo
-  created_at: <%= 3.seconds.from_now %>
-
-two:
-  body: ""
   creator: jz
-  bubble: layout
-  created_at: <%= 3.seconds.from_now %>
 
-three:
-  body: ""
+logo_two:
+  bubble: logo
+  creator: jz
+
+logo_three:
+  bubble: logo
   creator: kevin
-  bubble: logo
-  created_at: <%= 3.seconds.from_now %>
 
-four:
-  body: ""
+layout_one:
+  bubble: layout
   creator: jz
-  bubble: logo
-  created_at: <%= 3.seconds.from_now %>

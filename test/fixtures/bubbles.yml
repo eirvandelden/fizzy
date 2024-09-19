@@ -2,20 +2,17 @@ logo:
   project: writebook
   creator: david
   title: The logo isn't big enough
-  body: Make the logo bigger.
-  color: '#ED8008'
+  color: "#ED8008"
   due_on: <%= 3.days.from_now %>
 
 layout:
   project: writebook
   creator: david
   title: Layout is broken
-  body: The page scrolls horizontally on mobile devices.
-  color: '#698F9C'
+  color: "#698F9C"
 
 text:
   project: writebook
   creator: kevin
   title: The text is too small
-  body: Increase the font size.
   color: "#3B4B59"
