@@ -6,7 +6,7 @@
   <dialog class="filter__popup panel fill-white shadow" data-dialog-target="dialog">
     <menu class="filter__menu unpad margin-none">
       <% bucket.users.active.order(:name).each do |user| %>
-        <li><%= link_to user.name, bucket_bubbles_path(bucket, bubble_filter_params.merge(assignee_ids: user.id)) %></li>
+        <li><%= link_to user.name, bucket_bubbles_path(bucket, bubble_filter_params.merge("assignee_ids[]": user.id)) %></li>
       <% end %>
     </menu>
   </dialog>

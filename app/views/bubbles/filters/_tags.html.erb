@@ -6,7 +6,7 @@
   <dialog class="filter__popup panel fill-white shadow" data-dialog-target="dialog">
     <menu class="filter__menu unpad margin-none">
       <% bucket.tags.order(:title).each do |tag| %>
-        <li><%= link_to tag.title, bucket_bubbles_path(bucket, bubble_filter_params.merge(tag_ids: tag.id)) %></li>
+        <li><%= link_to tag.title, bucket_bubbles_path(bucket, bubble_filter_params.merge("tag_ids[]": tag.id)) %></li>
       <% end %>
     </menu>
   </dialog>
