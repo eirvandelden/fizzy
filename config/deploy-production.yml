@@ -1,5 +1,0 @@
-image: registry.kevinmcconnell.dev/fizzy
-host: once-fizzy-101
-ssl_domain: fizzy.37signals.com
-ssh_user: app
-arch: linux/amd64
