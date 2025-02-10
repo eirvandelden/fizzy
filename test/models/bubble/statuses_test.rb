@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Bubble::DraftableTest < ActiveSupport::TestCase
+class Bubble::StatusesTest < ActiveSupport::TestCase
   test "bubbles start out in a `creating` state" do
     bubble = buckets(:writebook).bubbles.create! creator: users(:kevin), title: "Newly created bubble"
 

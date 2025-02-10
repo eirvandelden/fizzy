@@ -1,4 +1,4 @@
-module Bubble::Draftable
+module Bubble::Statuses
   extend ActiveSupport::Concern
 
   included do
