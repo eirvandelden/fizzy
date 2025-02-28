@@ -103,9 +103,9 @@
     <% else %>
       <div class="comments">
         <div class="comment comment--new border-radius flex align-start full-width margin-block-double">
-          <form data-controller="remote-auto-save paste" data-remote-auto-save-auto-save-outlet="#bubble_form" class="flex flex-column gap full-width" data-action="paste->paste#pasteFiles">
+          <form data-controller="outlet-auto-save paste" data-outlet-auto-save-auto-save-outlet="#bubble_form" class="flex flex-column gap full-width" data-action="paste->paste#pasteFiles">
             <%= tag.house_md @bubble.draft_comment, name: "bubble[draft_comment]", class: "input comment__input", form: "bubble_form", placeholder: new_comment_placeholder(@bubble),
-                  data: { action: "house-md:change->remote-auto-save#change focusout->remote-auto-save#submit", uploads_url: uploads_url(format: "json") } %>
+                  data: { action: "house-md:change->outlet-auto-save#change focusout->outlet-auto-save#submit", uploads_url: uploads_url(format: "json") } %>
           </form>
         </div>
       </div>
