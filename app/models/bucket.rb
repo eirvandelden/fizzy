@@ -16,11 +16,6 @@ class Bucket < ApplicationRecord
 
   private
     def update_bubbles_workflow
-      if workflow
-        first_stage = workflow.stages.first
-        bubbles.update_all(stage_id: first_stage.id) if first_stage
-      else
-        bubbles.update_all(stage_id: nil)
-      end
+      bubbles.update_all(stage_id: workflow&.stages&.first&.id)
     end
 end
