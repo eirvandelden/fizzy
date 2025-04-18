@@ -9,6 +9,13 @@ module Card::Engageable
     scope :considering, -> { published_or_drafted_by(Current.user).active.where.missing(:engagement) }
     scope :doing,       -> { published.active.joins(:engagement) }
     scope :stagnated,   -> { doing.where(last_active_at: ..STAGNATED_AFTER.ago) }
+
+    scope :by_engagement_status, ->(status) do
+      case status.to_s
+      when "considering" then considering
+      when "doing"       then doing.with_golden_first
+      end
+    end
   end
 
   class_methods do
