@@ -8,7 +8,7 @@ class Command::AssignTest < ActionDispatch::IntegrationTest
     @card = cards(:text)
   end
 
-  test "assigns card on perma" do
+  test "assign card on perma" do
     assert_difference -> { @card.assignees.count }, +2 do
       execute_command "/assign @kevin @david", context_url: collection_card_url(@card.collection, @card)
     end
@@ -17,7 +17,7 @@ class Command::AssignTest < ActionDispatch::IntegrationTest
     assert_includes @card.assignees, users(:kevin)
   end
 
-  test "assigns cards on cards' index page" do
+  test "assign cards on cards' index page" do
     execute_command "/assign @kevin @david", context_url: collection_cards_url(@card.collection)
 
     cards(:logo, :text, :layout).each do |card|
