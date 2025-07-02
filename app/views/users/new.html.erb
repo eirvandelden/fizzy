@@ -2,7 +2,7 @@
 
 <% content_for :header do %>
   <nav>
-    <%= link_to new_session_path, class: "btn flex-item-justify-end", data: { controller: "hotkey", action: "keydown.esc@document->hotkey#click" } do %>
+    <%= link_to Launchpad.login_url(account: Current.account), class: "btn flex-item-justify-end", data: { controller: "hotkey", action: "keydown.esc@document->hotkey#click" } do %>
       <span class="for-screen-reader">Sign in instead</span>
     <% end %>
   </nav>

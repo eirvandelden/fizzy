@@ -43,7 +43,7 @@
   </div>
 
   <div class="panel borderless center margin-block-double">
-    <%= button_to session_path, method: :delete, class: "btn center txt-medium" do %>
+    <%= button_to session_path, method: :delete, class: "btn center txt-medium", data: { turbo: false } do %>
       <%= icon_tag "logout" %>
       <span>Sign out</span>
     <% end %>

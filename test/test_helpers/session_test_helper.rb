@@ -6,7 +6,7 @@ module SessionTestHelper
   def sign_in_as(user)
     cookies[:session_token] = nil
     user = users(user) unless user.is_a? User
-    post session_path, params: { email_address: user.email_address, password: "secret123456" }
+    put session_launchpad_path, params: { sig: user.signal_user.perishable_signature }
     assert cookies[:session_token].present?
   end
 

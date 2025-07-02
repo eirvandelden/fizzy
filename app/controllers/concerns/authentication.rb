@@ -48,11 +48,7 @@ module Authentication
     def request_authentication
       session[:return_to_after_authenticating] = request.url
 
-      if Rails.application.config.x.local_authentication
-        redirect_to new_session_path
-      else
-        redirect_to Launchpad.login_url(account: Current.account), allow_other_host: true
-      end
+      redirect_to Launchpad.login_url(account: Current.account), allow_other_host: true
     end
 
     def after_authentication_url
