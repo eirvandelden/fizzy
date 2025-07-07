@@ -26,31 +26,12 @@
         <%= icon_tag "settings" %>
       <% end %>
     </div>
-
   </dialog>
 
-  <div class="tray__actions">
-    <%= button_to read_all_notifications_path,
-          class: "tray__notification-read-action btn btn--reversed fill-transparent borderless flex-item-justify-start txt-xx-small",
-          title: "Mark all notifications as read",
-          data: { action: "click->dialog#close", turbo_frame: "notifications" } do %>
-      <%= icon_tag "check" %>
-    <% end %>
-
-    <%= link_to tag.span("Notifications"), notifications_path,
-          class: "btn btn--reversed borderless fill-transparent center txt-uppercase txt-x-small full-width",
-          title: "See all notifications",
-          data: { action: "click->dialog#close" } %>
-
-    <%= link_to settings_notifications_path,
-          class: "tray__notification-settings-action btn btn--reversed fill-transparent borderless flex-item-justify-start txt-xx-small",
-          title: "Notification settings",
-          data: { action: "click->dialog#close" } do %>
-      <%= icon_tag "settings" %>
-    <% end %>
-  </div>
-
-  <button class="tray__toggle" data-action="dialog#toggle" aria-label="Expand notifications stack" aria-haspopup="true">
-    <%= icon_tag "bell" %>
+  <button class="tray__toggle" data-action="dialog#toggle" aria-label="Toggle notifications stack" aria-haspopup="true">
+    <div class="tray__toggle-btn txt-uppercase btn btn--reversed txt-x-small center full-width">
+      <%= icon_tag "bell" %>
+      <span class="tray__toggle-text">Notifications</span>
+    </div>
   </button>
 </section>

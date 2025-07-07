@@ -133,50 +133,6 @@
     } */
   }
 
-  /* Actions
-  /* ------------------------------------------------------------------------ */
-
-  .tray__actions {
-    align-self: center;
-    align-items: stretch;
-    border: 1px dashed oklch(var(--lch-white) / 50%);
-    border-radius: 0.5em;
-    color: var(--color-ink-inverted);
-    display: flex;
-    gap: var(--inline-space-half);
-    opacity: 0;
-    transition: translate var(--tray-duration) var(--tray-timing-function);
-    translate: 0 var(--footer-height);
-
-    .btn {
-      opacity: 0.66;
-
-      &:hover,
-      &:focus-visible {
-        opacity: 1;
-      }
-    }
-
-    .tray__dialog[open] ~ & {
-      opacity: 1;
-      translate: 0 0;
-    }
-
-    /* On desktop, show actions when there aren't items */
-    @media (min-width: 800px) {
-      .tray__dialog:not(:has(.tray__item:not(.tray__item--overflow))) ~ & {
-        opacity: 1;
-        translate: 0 0;
-      }
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .btn--reversed {
-        color: var(--color-ink);
-      }
-    }
-  }
-
   /* Item
   /* ------------------------------------------------------------------------ */
 
