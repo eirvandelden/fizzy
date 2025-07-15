@@ -7,7 +7,8 @@ class Sessions::LaunchpadController < ApplicationController
   end
 
   def update
-    if user = Current.account.signal_account.authenticate(sig: @sig).try(:peer)
+    user = Current.account.signal_account.authenticate(sig: @sig).try(:peer)
+    if user.present? && user.active?
       start_new_session_for user
       redirect_to after_authentication_url
     else

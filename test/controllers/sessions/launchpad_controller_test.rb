@@ -21,9 +21,16 @@ class Sessions::LaunchpadControllerTest < ActionDispatch::IntegrationTest
     assert parsed_cookies.signed[:session_token]
   end
 
-  test "returns 401 when the sig is invalid" do
+  test "create checks user.active?" do
     user = users(:david)
+    user.update! active: false
 
+    put session_launchpad_path(params: { sig: user.signal_user.perishable_signature })
+
+    assert_response :unauthorized
+  end
+
+  test "returns 401 when the sig is invalid" do
     put session_launchpad_path(params: { sig: "invalid" })
 
     assert_response :unauthorized
