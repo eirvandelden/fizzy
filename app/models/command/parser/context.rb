@@ -1,28 +1,31 @@
 class Command::Parser::Context
-  attr_reader :user, :url, :script_name
+  attr_reader :user, :url, :script_name, :source_context
 
-  def initialize(user, url:, script_name: "")
+  MAX_CARDS = 75
+
+  def initialize(user, url:, script_name: "", source_context: nil)
     @user = user
     @url = url
     @script_name = script_name
+    @source_context = source_context
 
     extract_url_components
   end
 
   def cards
-    if viewing_card_contents?
-      user.accessible_cards.where id: params[:id]
-    elsif viewing_cards_index?
-      filter.cards.published
-    elsif viewing_search_results?
-      user.accessible_cards.where(id: user.search(params[:q]).select(:card_id))
-    else
-      Card.none
-    end
+    cards_from_current_view.limit(MAX_CARDS)
   end
 
   def viewing_card_contents?
     viewing_card_perma?
+  end
+
+  def originally_viewing_card_contents?
+    (source_context || self).viewing_card_contents?
+  end
+
+  def original_cards
+    (source_context || self).cards
   end
 
   def viewing_list_of_cards?
@@ -70,8 +73,17 @@ class Command::Parser::Context
   private
     attr_reader :controller, :action, :params
 
-    MAX_CARDS = 20
-    MAX_CLOSED_CARDS = 10
+    def cards_from_current_view
+      if viewing_card_contents?
+        user.accessible_cards.where id: params[:id]
+      elsif viewing_cards_index?
+        filter.cards.published
+      elsif viewing_search_results?
+        user.accessible_cards.where(id: user.search(params[:q]).select(:card_id))
+      else
+        Card.none
+      end
+    end
 
     def viewing_card_perma?
       controller == "cards" && action == "show"
@@ -91,6 +103,6 @@ class Command::Parser::Context
       route = Rails.application.routes.recognize_path(path)
       @controller = route[:controller]
       @action = route[:action]
-      @params =  ActionController::Parameters.new(Rack::Utils.parse_nested_query(uri.query).merge(route.except(:controller, :action)))
+      @params = ActionController::Parameters.new(Rack::Utils.parse_nested_query(uri.query).merge(route.except(:controller, :action)))
     end
 end

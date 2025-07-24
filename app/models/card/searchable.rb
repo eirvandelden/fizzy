@@ -21,6 +21,14 @@ module Card::Searchable
     end
   end
 
+  def search_embedding_content
+    <<~CONTENT
+        Title: #{title}
+        Description: #{description.to_plain_text}
+        Created by: #{creator.name}}
+      CONTENT
+  end
+
   private
     # TODO: Temporary until we stabilize the search API
     def title_and_description

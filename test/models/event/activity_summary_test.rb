@@ -5,12 +5,7 @@ class Event::ActivitySummaryTest < ActiveSupport::TestCase
 
   setup do
     @events = Event.limit(3)
-
-    # Make sure we fix dates since they change the prompt and this gets VCR confused
-    anchor_date = Time.zone.parse("2025-08-12 9am")
-    [ Event, Card, Comment ].each do |klass|
-      klass.update_all created_at: anchor_date
-    end
+    freeze_timestamps
   end
 
   test "create summaries only once for a given set of events" do

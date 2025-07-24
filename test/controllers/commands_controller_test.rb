@@ -5,6 +5,7 @@ class CommandsControllerTest < ActionDispatch::IntegrationTest
 
   setup do
     sign_in_as :kevin
+    freeze_timestamps
   end
 
   test "command that results in a redirect" do

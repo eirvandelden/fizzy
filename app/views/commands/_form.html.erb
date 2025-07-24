@@ -8,6 +8,7 @@
             keydown.enter->terminal#submitCommand
             keydown.up->toggle-class#add:prevent
             keydown.up->navigable-list#selectCurrentOrReset:stop
+            keydown.up->terminal#hideMenus
             terminal#hideError
             turbo:submit-start->terminal#commandSubmitted
             turbo:submit-end->terminal#focus

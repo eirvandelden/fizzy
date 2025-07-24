@@ -3,6 +3,12 @@ class Account < ApplicationRecord
 
   has_many_attached :uploads
 
+  class << self
+    def script_name
+      @script_name ||= "/#{sole.queenbee_id}"
+    end
+  end
+
   def setup_basic_template
     user = User.first
 

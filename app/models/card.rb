@@ -1,6 +1,6 @@
 class Card < ApplicationRecord
-  include Assignable, Attachments, Colored, Engageable, Entropic, Eventable,
-    Golden, Mentions, Multistep, Pinnable, Closeable, Readable, Searchable,
+  include Assignable, Attachments, Closeable, Colored, Engageable, Entropic, Eventable,
+    Golden, Mentions, Multistep, Pinnable, Promptable, Readable, Searchable,
     Staged, Stallable, Statuses, Taggable, Watchable
 
   belongs_to :collection, touch: true
@@ -20,13 +20,13 @@ class Card < ApplicationRecord
 
   scope :indexed_by, ->(index) do
     case index
-    when "newest"  then reverse_chronologically
-    when "oldest"  then chronologically
-    when "latest"  then latest
+    when "newest" then reverse_chronologically
+    when "oldest" then chronologically
+    when "latest" then latest
     when "stalled" then stalled.chronologically
     when "closing_soon" then closing_soon.chronologically
     when "falling_back_soon" then falling_back_soon.chronologically
-    when "closed"  then closed
+    when "closed" then closed.recently_closed_first
     end
   end
 

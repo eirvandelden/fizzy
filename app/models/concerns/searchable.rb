@@ -1,6 +1,21 @@
 module Searchable
   extend ActiveSupport::Concern
 
+  included do
+    has_one :search_embedding, as: :record, dependent: :destroy, class_name: "Search::Embedding"
+
+    after_create_commit :refresh_search_embedding_later
+    after_update_commit :refresh_search_embedding_later
+    after_destroy_commit :remove_search_embedding
+
+    scope :search_similar, ->(query) do
+      query_embedding = Rails.cache.fetch("embed-search:#{query}") { RubyLLM.embed(Ai::Tokenizer.truncate(query)) }
+      joins(:search_embedding)
+        .where("embedding MATCH ? AND k = ?", query_embedding.vectors.to_json, 20)
+        .order(:distance)
+    end
+  end
+
   class_methods do
     def searchable_by(*fields, using:)
       define_method :search_fields do
@@ -40,6 +55,12 @@ module Searchable
     update_in_search_index
   end
 
+  def refresh_search_embedding
+    embedding = RubyLLM.embed(Ai::Tokenizer.truncate(search_embedding_content))
+    search_embedding = self.search_embedding || build_search_embedding
+    search_embedding.update! embedding: embedding.vectors.to_json
+  end
+
   private
     def create_in_search_index
       fields_sql = [ "rowid", *search_fields ].join(", ")
@@ -73,5 +94,13 @@ module Searchable
     def execute_sql_with_binds(*statement)
       self.class.connection.execute self.class.sanitize_sql(statement)
       self.class.connection.raw_connection.changes.nonzero?
+    end
+
+    def refresh_search_embedding_later
+      Search::RefreshEmbeddingJob.perform_later(self)
+    end
+
+    def remove_search_embedding
+      search_embedding&.destroy
     end
 end

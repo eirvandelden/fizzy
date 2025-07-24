@@ -5,20 +5,32 @@ class Command::Ai::TranslatorTest < ActionDispatch::IntegrationTest
 
   setup do
     @user = users(:david)
+
+    freeze_timestamps
   end
 
   test "filter by assignments" do
     # List context
     assert_command({ context: { assignee_ids: [ "jz" ] } }, "cards assigned to jz")
+    assert_command({ context: { assignee_ids: [ "jz" ] } }, "issues assigned to jz")
+    assert_command({ context: { assignee_ids: [ "jz" ] } }, "bugs assigned to jz")
     assert_command({ context: { assignee_ids: [ "kevin" ] } }, "stuff assigned to kevin")
     assert_command({ context: { assignee_ids: [ "jz" ] } }, "assigned to jz")
     assert_command({ context: { assignment_status: "unassigned" } }, "unassigned cards")
     assert_command({ context: { assignment_status: "unassigned" } }, "not assigned")
     assert_command({ context: { assignee_ids: [ "jorge" ], terms: [ "performance" ] } }, "cards about performance assigned to jorge")
-    assert_command({ context: { closer_ids: [ "jz" ], indexed_by: "latest" } }, "stuff that jz has done lately")
 
     # Card context
     assert_command({ context: { assignee_ids: [ "jz" ] } }, "cards assigned to jz", context: :card)
+  end
+
+  test "filter by terms" do
+    assert_command({ context: { terms: [ "backups" ] } }, "cards about backups")
+    assert_command({ context: { terms: [ "cables" ] } }, "issues about cables")
+    assert_command({ context: { terms: [ "infrastructure" ] } }, "infrastructure bugs")
+    assert_command({ context: { terms: [ "infrastructure" ] } }, "bugs about infrastructure")
+    assert_command({ context: { terms: [ "infrastructure" ] } }, "infrastructure stuff")
+    assert_command({ context: { terms: [ "red cars" ] } }, "issues about red cars")
   end
 
   test "filter by tag" do
@@ -50,6 +62,8 @@ class Command::Ai::TranslatorTest < ActionDispatch::IntegrationTest
   end
 
   test "filter by card id" do
+    assert_command({ context: { card_ids: [ cards(:logo).id ] } }, "this card", context: :card)
+
     assert_command({ context: { card_ids: [ 123 ] } }, "card 123")
     assert_command({ context: { card_ids: [ 123, 456 ] } }, "card 123, 456")
     assert_command({ commands: [ "/search 123" ] }, "123") # Notice existing cards will be intercepted earlier
@@ -123,7 +137,7 @@ class Command::Ai::TranslatorTest < ActionDispatch::IntegrationTest
   end
 
   test "visit screens" do
-    assert_command({ commands: [ "/visit #{user_path(@user, script_name: nil)}" ] }, "my profile")
+    assert_command({ commands: [ "/user #{@user.to_gid}" ] }, "my profile")
     assert_command({ commands: [ "/visit #{edit_user_path(@user, script_name: nil)}" ] }, "edit my profile")
     assert_command({ commands: [ "/visit #{account_settings_path(script_name: nil)}" ] }, "manage users")
     assert_command({ commands: [ "/visit #{account_settings_path(script_name: nil)}" ] }, "account settings")
@@ -132,9 +146,8 @@ class Command::Ai::TranslatorTest < ActionDispatch::IntegrationTest
   end
 
   test "view users profiles" do
-    assert_command({ commands: [ "/user jz" ] }, "check what jz has been up to")
     assert_command({ commands: [ "/user kevin" ] }, "view kevin")
-    assert_command({ commands: [ "/user john" ] }, "view john")
+    assert_command({ commands: [ "/user john" ] }, "view john profile")
   end
 
   test "create cards" do
@@ -151,7 +164,26 @@ class Command::Ai::TranslatorTest < ActionDispatch::IntegrationTest
 
   test "default to search" do
     assert_command({ commands: [ "/search backups" ] }, "backups")
-    assert_command({ context: { terms: [ "backups" ] } }, "cards about backups")
+  end
+
+  test "get insight" do
+    assert_command({ context: { indexed_by: "latest" }, commands: [ "/insight cards similar to 1234" ] }, "cards similar to 1234")
+
+    assert_command({ context: { indexed_by: "latest" }, commands: [ "/insight cards where mike has commented on" ] }, "cards where mike has commented on")
+    assert_command({ context: { assignee_ids: [ "jz" ] }, commands: [ "/insight cards where mike has commented" ] }, "cards where mike has commented assigned to jz")
+    assert_command({ context: { indexed_by: "latest" }, commands: [ "/insight are there blockers here?" ] }, "are there blockers here?")
+    assert_command({ context: { indexed_by: "latest" }, commands: [ "/insight stuff that jz has done lately" ] }, "stuff that jz has done lately")
+    assert_command({ context: { indexed_by: "latest" }, commands: [ "/insight challenging cards" ] }, "challenging cards")
+    assert_command({ context: { indexed_by: "latest" }, commands: [ "/insight who is everywhere?" ] }, "who is everywhere?")
+    assert_command({ context: { indexed_by: "latest" }, commands: [ "/insight who is overloaded" ] }, "who is overloaded")
+
+    assert_command({ context: { indexed_by: "latest" }, commands: [ "/insight cards similar to this one" ] }, "cards similar to this one", context: :card)
+
+    assert_command({ commands: [ "/insight summarize" ] }, "summarize", context: :card)
+    assert_command({ commands: [ "/insight are there blockers?" ] }, "are there blockers?", context: :card)
+
+    assert_command({ context: { indexed_by: "latest" }, commands: [ "/insight cards with much activity" ] }, "cards with much activity")
+    assert_command({ context: { stage_ids: [ "triage" ] }, commands: [ "/insight summarize" ] }, "summarize cards in triage")
   end
 
   test "combine commands and filters" do

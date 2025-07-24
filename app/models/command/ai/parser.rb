@@ -26,7 +26,7 @@ class Command::Ai::Parser
 
       commands = Array.wrap(commands_from_query(normalized_query, resolved_context))
 
-      if query_context
+      if query_context && !commands.last.is_a?(Command::GetInsight)
         commands.unshift Command::VisitUrl.new(user: user, url: query_context.url, context: resolved_context)
       end
 
@@ -64,7 +64,7 @@ class Command::Ai::Parser
     def context_from_query(query_json)
       if context_properties = query_json[:context].presence
         url = cards_path(**context_properties)
-        Command::Parser::Context.new(user, url: url, script_name: context.script_name)
+        Command::Parser::Context.new(user, url: url, script_name: context.script_name, source_context: context)
       end
     end
 end

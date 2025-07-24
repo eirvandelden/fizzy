@@ -3,6 +3,10 @@ require "test_helper"
 class Command::Ai::ParserTest < ActionDispatch::IntegrationTest
   include CommandTestHelper, VcrTestHelper
 
+  setup do
+    freeze_timestamps
+  end
+
   test "parse command strings into a composite command containing the individual commands" do
     command = parse_command "assign @kevin and close"
 

@@ -7,6 +7,8 @@ class Command::GoToCardTest < ActionDispatch::IntegrationTest
 
   setup do
     @card = cards(:logo)
+
+    freeze_time Time.parse("2025-07-14 9:·30am")
   end
 
   test "redirect to the card perma" do

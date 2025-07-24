@@ -37,4 +37,14 @@ module VcrTestHelper
   def without_vcr_body_matching(&block)
     VCR.use_cassette("#{@casette_name}_without_body", match_requests_on: [ :method, :uri ], &block)
   end
+
+  def freeze_timestamps(models = [ Event, Card, Comment ])
+    # Make sure we fix dates since they change the prompt and this gets VCR confused
+    date = Time.zone.parse("2025-08-12 9am")
+
+    freeze_time date
+    models.each do |klass|
+      klass.update_all created_at: date
+    end
+  end
 end

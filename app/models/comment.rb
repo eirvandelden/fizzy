@@ -1,5 +1,5 @@
 class Comment < ApplicationRecord
-  include Attachments, Eventable, Mentions, Searchable
+  include Attachments, Eventable, Mentions, Promptable, Searchable
   belongs_to :card, touch: true
 
   belongs_to :creator, class_name: "User", default: -> { Current.user }

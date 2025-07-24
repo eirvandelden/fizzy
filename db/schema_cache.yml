@@ -451,7 +451,7 @@ columns:
     default_function:
     collation:
     comment:
-  - &34 !ruby/object:ActiveRecord::ConnectionAdapters::SQLite3::Column
+  - &35 !ruby/object:ActiveRecord::ConnectionAdapters::SQLite3::Column
     auto_increment:
     name: title
     cast_type: *7
@@ -672,7 +672,7 @@ columns:
   - *6
   - *9
   event_activity_summaries:
-  - &32 !ruby/object:ActiveRecord::ConnectionAdapters::SQLite3::Column
+  - &33 !ruby/object:ActiveRecord::ConnectionAdapters::SQLite3::Column
     auto_increment:
     name: content
     cast_type: *15
@@ -771,7 +771,7 @@ columns:
     comment:
   filters_tags:
   - *19
-  - &33 !ruby/object:ActiveRecord::ConnectionAdapters::SQLite3::Column
+  - &34 !ruby/object:ActiveRecord::ConnectionAdapters::SQLite3::Column
     auto_increment:
     name: tag_id
     cast_type: *3
@@ -958,6 +958,43 @@ columns:
     default_function:
     collation:
     comment:
+  search_embeddings_vector_chunks00:
+  - !ruby/object:ActiveRecord::ConnectionAdapters::SQLite3::Column
+    auto_increment:
+    name: rowid
+    cast_type: !ruby/object:ActiveModel::Type::Value
+      precision:
+      scale:
+      limit:
+    sql_type_metadata: !ruby/object:ActiveRecord::ConnectionAdapters::SqlTypeMetadata
+      sql_type: ''
+      type:
+      limit:
+      precision:
+      scale:
+    'null': true
+    default:
+    default_function:
+    collation:
+    comment:
+  - !ruby/object:ActiveRecord::ConnectionAdapters::SQLite3::Column
+    auto_increment:
+    name: vectors
+    cast_type: !ruby/object:ActiveModel::Type::Binary
+      precision:
+      scale:
+      limit:
+    sql_type_metadata: !ruby/object:ActiveRecord::ConnectionAdapters::SqlTypeMetadata
+      sql_type: BLOB
+      type: :binary
+      limit:
+      precision:
+      scale:
+    'null': false
+    default:
+    default_function:
+    collation:
+    comment:
   search_queries:
   - *5
   - *6
@@ -1015,7 +1052,7 @@ columns:
     default_function:
     collation:
     comment:
-  - *32
+  - *33
   - *5
   - *6
   - *9
@@ -1023,12 +1060,12 @@ columns:
   - *22
   - *5
   - *6
-  - *33
+  - *34
   - *9
   tags:
   - *5
   - *6
-  - *34
+  - *35
   - *9
   users:
   - !ruby/object:ActiveRecord::ConnectionAdapters::SQLite3::Column
@@ -1167,6 +1204,7 @@ primary_keys:
   push_subscriptions: id
   reactions: id
   schema_migrations: version
+  search_embeddings_vector_chunks00: rowid
   search_queries: id
   search_results: id
   sessions: id
@@ -1213,6 +1251,7 @@ data_sources:
   push_subscriptions: true
   reactions: true
   schema_migrations: true
+  search_embeddings_vector_chunks00: true
   search_queries: true
   search_results: true
   sessions: true
@@ -2425,6 +2464,7 @@ indexes:
     comment:
     valid: true
   schema_migrations: []
+  search_embeddings_vector_chunks00: []
   search_queries:
   - !ruby/object:ActiveRecord::ConnectionAdapters::IndexDefinition
     table: search_queries
@@ -2663,4 +2703,4 @@ indexes:
     comment:
     valid: true
   workflows: []
-version: 20250722132226
+version: 20250723165724

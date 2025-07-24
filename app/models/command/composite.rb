@@ -5,15 +5,11 @@ class Command::Composite < Command
   has_many :commands, inverse_of: :parent, dependent: :destroy
 
   def execute
-    ApplicationRecord.transaction do
-      commands.collect { it.execute }
-    end
+    commands.collect { it.execute }
   end
 
   def undo
-    ApplicationRecord.transaction do
-      undoable_commands.collect { it.undo }
-    end
+    undoable_commands.collect { it.undo }
   end
 
   def undoable?

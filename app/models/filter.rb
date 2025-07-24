@@ -32,7 +32,7 @@ class Filter < ApplicationRecord
       result = result.closed_at_window(closure_window) if closure_window
       result = result.closed_by(closers) if closers.present?
       result = terms.reduce(result) do |result, term|
-        result.mentioning(term)
+        result.similar_to(term)
       end
 
       result

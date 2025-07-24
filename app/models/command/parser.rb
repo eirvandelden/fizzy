@@ -56,7 +56,7 @@ class Command::Parser
       when "/do"
         Command::Do.new(card_ids: cards.ids)
       when "/insight"
-        Command::GetInsight.new(query: combined_arguments, card_ids: cards.ids)
+        Command::GetInsight.new(query: combined_arguments, card_ids: cards.ids, params: filter.as_params)
       when "/add"
         Command::AddCard.new(card_title: combined_arguments, collection_id: guess_collection&.id)
       when "/search"
