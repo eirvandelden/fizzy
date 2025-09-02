@@ -4,8 +4,6 @@ class Event::Summarizer
 
   attr_reader :events
 
-  MAX_WORDS = 120
-
   LLM_MODEL = "chatgpt-4o-latest"
 
   PROMPT = <<~PROMPT
