@@ -21,14 +21,9 @@
   </div>
 <% end %>
 
-<%= tag.section class: "panel shadow center webhooks", data: {
-  controller: "navigable-list",
-  action: "keydown->navigable-list#navigate",
-  navigable_list_focus_on_selection_value: true,
-  navigable_list_actionable_items_value: true
-} do %>
+<%= tag.section class: "panel shadow center webhooks" do %>
   <% if @page.records.any? %>
-    <ul class="flex flex-column align-start gap margin-none unpad" data-filter-target="list">
+    <ul class="flex flex-column align-start gap margin-none unpad webhooks-list">
       <%= render partial: "webhooks/webhook", collection: @page.records %>
     </ul>
   <% else %>
@@ -38,11 +33,5 @@
       <%= icon_tag "add" %>
       <span>Set up a webhook</span>
     <% end %>
-  <% end %>
-
-  <% if @page.records.many? %>
-    <footer class="popup__footer">
-      Press <kbd class="kbd">↑</kbd><kbd class="kbd">↓</kbd> to move, <kbd class="kbd">enter</kbd> to visit webhook, <kbd class="kbd">SHIFT+ENTER</kbd> to toggle.
-    </footer>
   <% end %>
 <% end %>
