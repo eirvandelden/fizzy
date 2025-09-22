@@ -29,7 +29,7 @@
 
   <%= render "layouts/lightbox" do %>
     <% if @card.image.attached? %>
-      <%= button_to card_image_path(@card), method: :delete, class: "btn tooltip", data: { controller: "tooltip" } do %>
+      <%= button_to card_image_path(@card), method: :delete, class: "btn", data: { controller: "tooltip" } do %>
         <%= icon_tag "trash" %>
         <span class="for-screen-reader">Remove background image</span>
       <% end %>

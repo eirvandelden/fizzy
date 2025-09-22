@@ -1,11 +1,11 @@
 <% if card.image.attached? %>
-  <%= button_to card_image_path(card), method: :delete, class: "btn tooltip", data: { controller: "tooltip" } do %>
+  <%= button_to card_image_path(card), method: :delete, class: "btn", data: { controller: "tooltip" } do %>
     <%= icon_tag "picture-remove" %>
     <span class="for-screen-reader">Remove background image</span>
   <% end %>
 <% elsif !card.closed? %>
   <%= form_with model: card, url: card_path(card), data: { controller: "form" } do |form| %>
-    <label class="btn input--file tooltip" data-controller="tooltip">
+    <label class="btn input--file" data-controller="tooltip">
       <%= icon_tag "picture-add" %>
       <span class="for-screen-reader">Add background image</span>
       <%= form.file_field :image, class: "input",

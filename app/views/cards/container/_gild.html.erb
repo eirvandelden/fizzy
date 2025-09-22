@@ -1,10 +1,10 @@
 <% if card.golden? %>
-  <%= button_to card_goldness_path(card), method: :delete, class: "btn btn--reversed tooltip", data: { controller: "tooltip" } do %>
+  <%= button_to card_goldness_path(card), method: :delete, class: "btn btn--reversed", data: { controller: "tooltip" } do %>
     <%= icon_tag "golden-ticket" %>
     <span class="for-screen-reader">Demote to normal</span>
   <% end %>
 <% else %>
-  <%= button_to card_goldness_path(card), class: "btn tooltip", data: { controller: "tooltip" } do %>
+  <%= button_to card_goldness_path(card), class: "btn", data: { controller: "tooltip" } do %>
     <%= icon_tag "golden-ticket" %>
     <span class="for-screen-reader">Promote to golden</span>
   <% end %>
