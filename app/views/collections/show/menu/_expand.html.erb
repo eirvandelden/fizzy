@@ -1,16 +1,4 @@
-<div class="cards__expander-menu" data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
-  <button class="btn btn--circle txt-x-small borderless" data-action="click->dialog#open">
-    <%= icon_tag "menu-dots-horizontal", class: "translucent" %>
-    <span class="for-screen-reader">Column options</span>
-  </button>
-  <dialog class="popup panel flex-column gap fill-white shadow txt-small margin-block-double" data-dialog-target="dialog">
-    <ul class="popup__list">
-      <li class="popup__item">
-        <%= link_to column_path, class: "popup__btn btn", data: { turbo_frame: "_top" } do %>
-          <%= icon_tag "external-link" %>
-          <span>Expand column</span>
-        <% end %>
-      </li>
-    </ul>
-  </dialog>
-</div>
+<%= link_to column_path, class: "btn btn--circle txt-x-small borderless cards__expander-button", data: { turbo_frame: "_top" } do %>
+  <%= icon_tag "external-link" %>
+  <span class="for-screen-reader">Expand column</span>
+<% end %>
