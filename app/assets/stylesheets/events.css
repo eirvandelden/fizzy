@@ -225,6 +225,17 @@
     text-align: center;
   }
 
+  .events__welcome-video {
+    .events:has(.day-timeline-pagination-link) + & {
+      display: none !important;
+    }
+
+    iframe {
+      aspect-ratio: 16 / 9;
+      inline-size: 100%;
+    }
+  }
+
   /* Event
   /* ------------------------------------------------------------------------ */
 
