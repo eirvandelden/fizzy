@@ -2,17 +2,21 @@ david:
   name: David
   role: member
   membership: david_in_37signals
+  account: 37s
 
 jz:
   name: JZ
   role: member
   membership: jz_in_37signals
+  account: 37s
 
 kevin:
   name: Kevin
   role: admin
   membership: kevin_in_37signals
+  account: 37s
 
 system:
   name: System
   role: system
+  account: 37s

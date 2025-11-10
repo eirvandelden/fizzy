@@ -3,27 +3,32 @@ logo_published_kevin:
   source: logo_published (Event)
   created_at: <%= 1.week.ago %>
   creator: david
+  account: 37s
 
 logo_assignment_kevin:
   user: kevin
   source: logo_assignment_km (Event)
   created_at: <%= 1.week.ago %>
   creator: david
+  account: 37s
 
 layout_commented_kevin:
   user: kevin
   source: layout_commented (Event)
   created_at: <%= 1.week.ago %>
   creator: david
+  account: 37s
 
 logo_card_david_mention_by_jz:
   user: david
   source: logo_card_david_mention_by_jz (Mention)
   created_at: <%= 1.week.ago %>
   creator: david
+  account: 37s
 
 logo_comment_david_mention_by_jz:
   user: david
   source: logo_comment_david_mention_by_jz (Mention)
   created_at: <%= 1.week.ago %>
   creator: david
+  account: 37s

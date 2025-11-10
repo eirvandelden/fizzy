@@ -4,6 +4,7 @@ logo_published:
   eventable: logo (Card)
   action: card_published
   created_at: <%= 1.week.ago %>
+  account: 37s
 
 logo_assignment_jz:
   creator: david
@@ -12,6 +13,7 @@ logo_assignment_jz:
   action: card_assigned
   particulars: <%= { assignee_ids: [ ActiveRecord::FixtureSet.identify(:jz) ] }.to_json %>
   created_at: <%= 1.week.ago + 1.hour %>
+  account: 37s
 
 logo_assignment_david:
   creator: david
@@ -20,6 +22,7 @@ logo_assignment_david:
   action: card_assigned
   particulars: <%= { assignee_ids: [ ActiveRecord::FixtureSet.identify(:david) ] }.to_json %>
   created_at: <%= 1.week.ago + 1.hour %>
+  account: 37s
 
 logo_assignment_km:
   creator: david
@@ -28,6 +31,7 @@ logo_assignment_km:
   action: card_assigned
   particulars: <%= { assignee_ids: [ ActiveRecord::FixtureSet.identify(:kevin) ] }.to_json %>
   created_at: <%= 1.day.ago %>
+  account: 37s
 
 layout_published:
   creator: david
@@ -35,6 +39,7 @@ layout_published:
   eventable: layout (Card)
   action: card_published
   created_at: <%= 1.week.ago %>
+  account: 37s
 
 layout_commented:
   creator: david
@@ -42,6 +47,7 @@ layout_commented:
   eventable: layout_overflowing_david (Comment)
   action: comment_created
   created_at: <%= 1.week.ago %>
+  account: 37s
 
 layout_assignment_jz:
   creator: david
@@ -50,6 +56,7 @@ layout_assignment_jz:
   action: card_assigned
   particulars: <%= { assignee_ids: [ ActiveRecord::FixtureSet.identify(:jz) ] }.to_json %>
   created_at: <%= 1.hour.ago %>
+  account: 37s
 
 text_published:
   creator: kevin
@@ -57,6 +64,7 @@ text_published:
   eventable: text (Card)
   action: card_published
   created_at: <%= 1.week.ago %>
+  account: 37s
 
 shipping_published:
   creator: kevin
@@ -64,6 +72,7 @@ shipping_published:
   eventable: shipping (Card)
   action: card_published
   created_at: <%= 1.week.ago %>
+  account: 37s
 
 shipping_closed:
   creator: kevin
@@ -71,3 +80,4 @@ shipping_closed:
   eventable: shipping (Card)
   action: card_closed
   created_at: <%= 2.days.ago %>
+  account: 37s

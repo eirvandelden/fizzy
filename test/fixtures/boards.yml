@@ -2,8 +2,10 @@ writebook:
   name: Writebook
   creator: david
   all_access: true
+  account: 37s
 
 private:
   name: Private board
   creator: kevin
   all_access: false
+  account: 37s

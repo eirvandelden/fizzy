@@ -51,6 +51,10 @@ module ActiveSupport
       #             how to set Current.user without needing both a session *and* an account
       Current.account = accounts("37s")
     end
+
+    teardown do
+      Current.clear_all
+    end
   end
 end
 

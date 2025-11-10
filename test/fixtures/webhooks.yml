@@ -5,6 +5,7 @@ active:
   signing_secret: p94Bx2HjempCdYB4DTyZkY1b
   subscribed_actions: '<%= %w[ card_published card_assigned card_closed ].to_json %>'
   board: writebook
+  account: 37s
 
 inactive:
   active: false
@@ -13,3 +14,4 @@ inactive:
   signing_secret: H8ms8ADcV92v2x17hnLEiL5m
   subscribed_actions: '<%= %w[ card_published card_assigned card_closed ].to_json %>'
   board: private
+  account: 37s

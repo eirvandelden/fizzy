@@ -7,6 +7,7 @@ logo:
   created_at: <%= 1.week.ago %>
   status: published
   last_active_at: <%= 1.week.ago %>
+  account: 37s
 
 layout:
   board: writebook
@@ -16,6 +17,7 @@ layout:
   created_at: <%= 1.week.ago %>
   status: published
   last_active_at: <%= 1.week.ago %>
+  account: 37s
 
 text:
   board: writebook
@@ -25,6 +27,7 @@ text:
   created_at: <%= 1.week.ago %>
   status: published
   last_active_at: <%= 1.week.ago %>
+  account: 37s
 
 shipping:
   board: writebook
@@ -34,6 +37,7 @@ shipping:
   created_at: <%= 1.week.ago %>
   status: published
   last_active_at: <%= 1.week.ago %>
+  account: 37s
 
 buy_domain:
   board: writebook
@@ -42,4 +46,5 @@ buy_domain:
   created_at: <%= 1.week.ago %>
   status: published
   last_active_at: <%= 1.week.ago %>
+  account: 37s
 

@@ -4,21 +4,25 @@ writebook_triage:
   color: "var(--color-card-4)"
   board: writebook
   position: 0
+  account: 37s
 
 writebook_in_progress:
   name: In progress
   color: "var(--color-card-2)"
   board: writebook
   position: 1
+  account: 37s
 
 writebook_on_hold:
   name: On Hold
   color: "var(--color-card-4)"
   board: writebook
   position: 2
+  account: 37s
 
 writebook_review:
   name: Review
   color: "var(--color-card-3)"
   board: writebook
   position: 3
+  account: 37s
