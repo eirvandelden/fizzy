@@ -1,4 +1,5 @@
 class JoinCodesController < ApplicationController
+  require_untenanted_access
   allow_unauthenticated_access
   before_action :set_join_code
   before_action :ensure_join_code_is_valid

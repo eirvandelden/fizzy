@@ -1,4 +1,5 @@
 class Sessions::MagicLinksController < ApplicationController
+  require_untenanted_access
   require_unauthenticated_access
   rate_limit to: 10, within: 15.minutes, only: :create, with: -> { redirect_to session_magic_link_path, alert: "Try again in 15 minutes." }
 

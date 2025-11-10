@@ -1,4 +1,6 @@
 class Memberships::EmailAddressesController < ApplicationController
+  require_untenanted_access
+
   layout "public"
 
   before_action :set_membership

@@ -1,4 +1,6 @@
 class Sessions::MenusController < ApplicationController
+  require_untenanted_access
+
   before_action(if: :render_as_menu_section?) { request.variant = :menu_section }
 
   layout "public"
