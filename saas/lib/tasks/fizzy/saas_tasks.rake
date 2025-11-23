@@ -5,7 +5,7 @@ namespace :test do
   Rake::TestTask.new(:saas) do |t|
     t.libs << "test"
     t.test_files = FileList[Fizzy::Saas::Engine.root.join("test/**/*_test.rb")]
-    t.verbose = true
+    t.warning = false
   end
 end
 
