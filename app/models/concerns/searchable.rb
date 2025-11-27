@@ -13,35 +13,32 @@ module Searchable
 
   private
     def create_in_search_index
-      Search::Record.for_account(account_id).create!(search_record_attributes)
+      search_record_class.create!(search_record_attributes)
     end
 
     def update_in_search_index
-      Search::Record.for_account(account_id).upsert_all(
-        [ search_record_attributes.merge(id: ActiveRecord::Type::Uuid.generate) ],
-        update_only: [ :card_id, :board_id, :title, :content, :created_at, :account_key ]
-      )
+      search_record_class.upsert!(search_record_attributes)
     end
 
     def remove_from_search_index
-      Search::Record.for_account(account_id).where(
-        searchable_type: self.class.name,
-        searchable_id: id
-      ).delete_all
+      search_record_class.find_by(searchable_type: self.class.name, searchable_id: id)&.destroy
     end
 
     def search_record_attributes
       {
         account_id: account_id,
-        account_key: "account#{account_id}",
         searchable_type: self.class.name,
         searchable_id: id,
         card_id: search_card_id,
         board_id: search_board_id,
-        title: Search::Stemmer.stem(search_title),
-        content: Search::Stemmer.stem(search_content),
+        title: search_title,
+        content: search_content,
         created_at: created_at
       }
+    end
+
+    def search_record_class
+      Search::Record.for(account_id)
     end
 
   # Models must implement these methods:

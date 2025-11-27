@@ -8,10 +8,12 @@ module Fizzy
       Queenbee.host_app = Fizzy
 
       initializer "fizzy_saas.transaction_pinning" do |app|
-        app.config.middleware.insert_after(
-          ActiveRecord::Middleware::DatabaseSelector,
-          TransactionPinning::Middleware
-        )
+        if ActiveRecord::Base.replica_configured?
+          app.config.middleware.insert_after(
+            ActiveRecord::Middleware::DatabaseSelector,
+            TransactionPinning::Middleware
+          )
+        end
       end
 
       config.to_prepare do

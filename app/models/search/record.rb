@@ -1,33 +1,20 @@
 class Search::Record < ApplicationRecord
-  self.abstract_class = true
-
-  SHARD_COUNT = 16
-
-  SHARD_CLASSES = SHARD_COUNT.times.map do |shard_id|
-    Class.new(self) do
-      self.table_name = "search_records_#{shard_id}"
-
-      def self.name
-        "Search::Record"
-      end
-    end
-  end.freeze
+  include const_get(connection.adapter_name)
 
   belongs_to :searchable, polymorphic: true
   belongs_to :card
 
-  # Virtual attributes from search query
-  attribute :query, :string
-
   validates :account_id, :searchable_type, :searchable_id, :card_id, :board_id, :created_at, presence: true
 
   class << self
-    def for_account(account_id)
-      SHARD_CLASSES[shard_id_for_account(account_id)]
-    end
-
-    def shard_id_for_account(account_id)
-      Zlib.crc32(account_id.to_s) % SHARD_COUNT
+    def upsert!(attributes)
+      record = find_by(searchable_type: attributes[:searchable_type], searchable_id: attributes[:searchable_id])
+      if record
+        record.update!(attributes)
+        record
+      else
+        create!(attributes)
+      end
     end
 
     def card_join
@@ -35,29 +22,23 @@ class Search::Record < ApplicationRecord
     end
   end
 
-  scope :for_query, ->(query:, user:) do
+  scope :for_query, ->(query, user:) do
+    query = Search::Query.wrap(query)
+
     if query.valid? && user.board_ids.any?
-      matching(query.to_s, user.account_id).for_user(user)
+      matching(query.to_s, user.account_id).where(account_id: user.account_id, board_id: user.board_ids)
     else
       none
     end
   end
 
-  scope :matching, ->(query, account_id) do
-    account_key = "account#{account_id}"
-    full_query = "+#{account_key} +(#{query})"
-    where("MATCH(#{table_name}.account_key, #{table_name}.content, #{table_name}.title) AGAINST(? IN BOOLEAN MODE)", full_query)
-  end
+  scope :search, ->(query, user:) do
+    query = Search::Query.wrap(query)
 
-  scope :for_user, ->(user) do
-    where(account_id: user.account_id, board_id: user.board_ids)
-  end
-
-  scope :search, ->(query:, user:) do
-    for_query(query: query, user: user)
+    for_query(query, user: user)
       .includes(:searchable, card: [ :board, :creator ])
-      .select(:id, :searchable_type, :searchable_id, :card_id, :board_id, :account_id, :created_at, "#{connection.quote(query.terms)} AS query")
       .order(created_at: :desc)
+      .select(:id, :account_id, :searchable_type, :searchable_id, :card_id, :board_id, :title, :content, :created_at, *search_fields(query))
   end
 
   def source
@@ -67,26 +48,4 @@ class Search::Record < ApplicationRecord
   def comment
     searchable if searchable_type == "Comment"
   end
-
-  def card_title
-    highlight(card.title, show: :full) if card_id
-  end
-
-  def card_description
-    highlight(card.description.to_plain_text, show: :snippet) if card_id
-  end
-
-  def comment_body
-    highlight(comment.body.to_plain_text, show: :snippet) if comment
-  end
-
-  private
-    def highlight(text, show:)
-      if text.present? && attribute?(:query)
-        highlighter = Search::Highlighter.new(query)
-        show == :snippet ? highlighter.snippet(text) : highlighter.highlight(text)
-      else
-        text
-      end
-    end
 end

@@ -66,8 +66,7 @@ module Board::Accessible
       #
       # 1. Mention->Card
       # 2. Mention->Comment->Card
-      uuid_type = ActiveRecord::Type.lookup(:uuid, adapter: :trilogy)
-      board_id_binary = uuid_type.serialize(id)
+      board_id_binary = ActiveRecord::Type::Uuid.new.serialize(id)
 
       user.mentions
         .joins("LEFT JOIN cards ON mentions.source_id = cards.id AND mentions.source_type = 'Card'")

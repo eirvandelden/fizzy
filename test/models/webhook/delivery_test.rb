@@ -164,7 +164,7 @@ class Webhook::DeliveryTest < ActiveSupport::TestCase
     webhook = Webhook.create!(
       board: boards(:writebook),
       name: "Slack",
-      url: "https://hooks.slack.com/services/T12345678/B12345678/abcdefghijklmnopqrstuvwx"
+      url: "https://hooks.slack.com/services/T12345678/B12345678/abcdefghijklmnopqrstuvwx" # gitleaks:allow
     )
     event = events(:layout_commented)
     delivery = Webhook::Delivery.create!(webhook: webhook, event: event)

@@ -31,4 +31,33 @@ class Card::SearchableTest < ActiveSupport::TestCase
     assert_includes results, card_in_board
     assert_not_includes results, card_in_other_board
   end
+
+  test "deleting card removes search record and FTS entry" do
+    search_record_class = Search::Record.for(@user.account_id)
+    card = @board.cards.create!(title: "Card to delete", creator: @user)
+
+    # Verify search record exists
+    search_record = search_record_class.find_by(searchable_type: "Card", searchable_id: card.id)
+    assert_not_nil search_record, "Search record should exist after card creation"
+
+    # For SQLite, verify FTS entry exists
+    if search_record_class.connection.adapter_name == "SQLite"
+      fts_entry = search_record.search_records_fts
+      assert_not_nil fts_entry, "FTS entry should exist"
+      assert_equal card.title, fts_entry.title
+    end
+
+    # Delete the card
+    card.destroy
+
+    # Verify search record is deleted
+    search_record = search_record_class.find_by(searchable_type: "Card", searchable_id: card.id)
+    assert_nil search_record, "Search record should be deleted after card deletion"
+
+    # For SQLite, verify FTS entry is deleted
+    if search_record_class.connection.adapter_name == "SQLite"
+      fts_count = Search::Record::SQLite::Fts.where(rowid: card.id).count
+      assert_equal 0, fts_count, "FTS entry should be deleted"
+    end
+  end
 end

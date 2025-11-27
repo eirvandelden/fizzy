@@ -6,7 +6,7 @@
   <dialog class="reaction__popup popup panel fill-white shadow" data-dialog-target="dialog">
     <div class="reaction__emoji-list">
       <% EmojiHelper::REACTIONS.each do |character, title| %>
-        <%= tag.button character, title: title, class: "reaction__emoji-btn btn btn--circle borderless", type: "button", data: { action: "reaction-emoji#insertEmoji dialog#close", emoji: character } %>
+        <%= tag.button character, title: title, class: "reaction__emoji-btn btn btn--circle borderless hide-focus-ring", type: "button", data: { action: "reaction-emoji#insertEmoji dialog#close", emoji: character } %>
       <% end %>
     </div>
   </dialog>

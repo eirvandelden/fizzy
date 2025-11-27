@@ -1,6 +1,29 @@
 {
   "ignored_warnings": [
     {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "4ea2e6d704b817af1d896dcdf148a89da8b9e428b3327497631ef8d9ed587307",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/card/entropic.rb",
+      "line": 19,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "active.joins(:board => :account).left_outer_joins(:board => :entropy).joins(\"LEFT OUTER JOIN entropies AS account_entropies ON account_entropies.account_id = accounts.id AND account_entropies.container_type = 'Account' AND account_entropies.container_id = accounts.id\").where(\"last_active_at > #{connection.date_subtract(\"?\", \"COALESCE(entropies.auto_postpone_period, account_entropies.auto_postpone_period)\")}\", Time.now)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Card::Entropic",
+        "method": null
+      },
+      "user_input": "connection.date_subtract(\"?\", \"COALESCE(entropies.auto_postpone_period, account_entropies.auto_postpone_period)\")",
+      "confidence": "Weak",
+      "cwe_id": [
+        89
+      ],
+      "note": "No user input allowed"
+    },
+    {
       "warning_type": "Dangerous Send",
       "warning_code": 23,
       "fingerprint": "746ab8227e04231f0002e099e2f670bcc2b8927af85cdc69fab1440002d5c2a6",
@@ -68,6 +91,29 @@
         470
       ],
       "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "bbd8fe3cbbc6b393df770d3142d6fa46e2b9441b21f48a52175211acaae4efad",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/card/entropic.rb",
+      "line": 10,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "active.joins(:board => :account).left_outer_joins(:board => :entropy).joins(\"LEFT OUTER JOIN entropies AS account_entropies ON account_entropies.account_id = accounts.id AND account_entropies.container_type = 'Account' AND account_entropies.container_id = accounts.id\").where(\"last_active_at <= #{connection.date_subtract(\"?\", \"COALESCE(entropies.auto_postpone_period, account_entropies.auto_postpone_period)\")}\", Time.now)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Card::Entropic",
+        "method": null
+      },
+      "user_input": "connection.date_subtract(\"?\", \"COALESCE(entropies.auto_postpone_period, account_entropies.auto_postpone_period)\")",
+      "confidence": "Weak",
+      "cwe_id": [
+        89
+      ],
+      "note": "No user input allowed"
     }
   ],
   "brakeman_version": "7.1.0"

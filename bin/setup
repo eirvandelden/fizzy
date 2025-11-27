@@ -59,7 +59,7 @@ step "Installing Ruby" mise install --yes
 eval "$(mise hook-env)"
 
 if which pacman >/dev/null 2>&1; then
-  packages=(imagemagick mariadb-libs openslide libvips)
+  packages=(imagemagick mariadb-libs openslide libvips gitleaks)
   if ! pacman -Q "${packages[@]}" >/dev/null 2>&1; then
     step "Installing packages" sudo pacman -S --noconfirm --needed "${packages[@]}"
   fi

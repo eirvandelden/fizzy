@@ -4,9 +4,8 @@ ActiveSupport.on_load(:active_storage_blob) do
   end
 end
 
-# Use DB read/write splitting for Active Storage models
 ActiveSupport.on_load(:active_storage_record) do
-  connects_to database: { writing: :primary, reading: :replica }
+  configure_replica_connections
 end
 
 module ActiveStorageControllerExtensions

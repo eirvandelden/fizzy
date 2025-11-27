@@ -14,7 +14,8 @@
         controller: "filter navigable-list nav-section-expander",
         dialog_target: "dialog",
         navigable_list_focus_on_selection_value: false,
-        navigable_list_actionable_items_value: true } do %>
+        navigable_list_actionable_items_value: true,
+        turbo_permanent: true } do %>
     <%= turbo_frame_tag "my_menu", src: my_menu_path, loading: :lazy, target: "_top" do %>
       <% # Passing empty block to avoid double-render  %>
       <%= render("my/menus/jump") { } %>

@@ -43,6 +43,4 @@ module AccountSlug
   def self.encode(id) FORMAT % id end
 end
 
-Rails.application.config.middleware.tap do |stack|
-  stack.insert_before ActiveRecord::Middleware::DatabaseSelector, AccountSlug::Extractor
-end
+Rails.application.config.middleware.insert_after Rack::TempfileReaper, AccountSlug::Extractor

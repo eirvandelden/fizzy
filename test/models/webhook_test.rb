@@ -54,7 +54,7 @@ class WebhookTest < ActiveSupport::TestCase
   end
 
   test "for_slack?" do
-    webhook = Webhook.new url: "https://hooks.slack.com/services/T12345678/B12345678/abcdefghijklmnopqrstuvwx"
+    webhook = Webhook.new url: "https://hooks.slack.com/services/T12345678/B12345678/abcdefghijklmnopqrstuvwx" # gitleaks:allow
     assert webhook.for_slack?
 
     webhook = Webhook.new url: "https://hooks.slack.com/services/T12345678/B12345678"

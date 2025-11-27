@@ -6,7 +6,7 @@ module User::Searcher
   end
 
   def search(terms)
-    Search.results(query: terms, user: self)
+    Search::Record.for(account_id).search(terms, user: self)
   end
 
   def remember_search(terms)

@@ -12,19 +12,11 @@ class Current < ActiveSupport::CurrentAttributes
     end
   end
 
-  def with_account(value)
-    @old_account = self.account
-    self.account = value
-    yield
-  ensure
-    self.account = @old_account
+  def with_account(value, &block)
+    with(account: value, &block)
   end
 
-  def without_account
-    @old_account = self.account
-    self.account = nil
-    yield
-  ensure
-    self.account = @old_account
+  def without_account(&block)
+    with(account: nil, &block)
   end
 end

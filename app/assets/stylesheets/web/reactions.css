@@ -176,8 +176,8 @@
   }
 
   .reaction__popup {
-    --panel-border-radius: 1.2em;
-    --panel-padding: 0.5ch;
+    --panel-border-radius: 1em;
+    --panel-padding: var(--block-space-half) var(--inline-space);
     --offset: calc(-1 * var(--panel-padding));
 
     inset: var(--offset) auto auto var(--offset);
@@ -187,12 +187,17 @@
 
   .reaction__emoji-list {
     display: grid;
+    gap: var(--inline-space-half);
     grid-template-columns: repeat(10, 1fr);
 
-    .btn {
-      --btn-size: 1.5rem;
+    @media (max-width: 630px) {
+      grid-template-columns: repeat(6, 1fr);
+    }
 
-      font-size: 1rem;
+    .btn {
+      --btn-size: calc(1.3rem * 1.3);
+
+      font-size: 1.3rem;
       position: relative;
 
       /* Make sure the focus ring sits on top of adjacent buttons */
@@ -203,7 +208,7 @@
       }
 
       &:hover {
-        scale: 1.5;
+        scale: 1.3;
       }
     }
   }

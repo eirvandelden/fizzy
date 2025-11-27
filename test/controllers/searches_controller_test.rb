@@ -30,6 +30,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_select "li .search__title", text: /Just haggis/, count: 2 # card title shows up in two entries
     assert_select "li .search__excerpt", text: /More haggis/ # one entry for the card description
     assert_select "li .search__excerpt--comment", text: /I love haggis/ # one entry for the comment
+    assert_match(/<mark class="circled-text"><span><\/span>haggis<\/mark>/, response.body)
 
     # Searching by card id
     get search_path(q: @card.id, script_name: "/#{@account.external_account_id}")
@@ -39,5 +40,27 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path(q: "999999", script_name: "/#{@account.external_account_id}")
     assert_select "form[data-controller='auto-submit']", count: 0
     assert_select ".search__empty", text: "No matches"
+  end
+
+  test "search highlights matched terms with proper HTML marks" do
+    @board.cards.create!(title: "Testing search highlighting", creator: @user)
+
+    get search_path(q: "highlighting", script_name: "/#{@account.external_account_id}")
+    assert_response :success
+  end
+
+  test "search preserves highlight marks but escapes surrounding HTML" do
+    @board.cards.create!(
+      title: "<b>Bold</b> testing content",
+      creator: @user
+    )
+
+    get search_path(q: "testing", script_name: "/#{@account.external_account_id}")
+    assert_response :success
+
+    # Should escape <b> tags
+    assert response.body.include?("&lt;b&gt;")
+    # But should preserve highlight marks around "testing"
+    assert_match(/<mark class="circled-text"><span><\/span>testing<\/mark>/, response.body)
   end
 end
