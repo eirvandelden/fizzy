@@ -23,4 +23,6 @@ json.cache! [ card, card.column&.color ] do
   json.creator do
     json.partial! "users/user", user: card.creator
   end
+
+  json.comments_url card_comments_url(card)
 end
