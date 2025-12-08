@@ -28,9 +28,13 @@ jobs:
 
       - name: Set variables
         id: vars
+        shell: bash
         run: |
-          TARGET_BRANCH="${{ github.event.inputs.target_branch || 'main' }}"
-          UPSTREAM_BRANCH="${{ github.event.inputs.upstream_branch || 'main' }}"
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          UPSTREAM_BRANCH="${{ github.event.inputs.upstream_branch }}"
+          # Fallback to defaults if inputs are empty (e.g., scheduled runs)
+          [ -z "$TARGET_BRANCH" ] && TARGET_BRANCH="main"
+          [ -z "$UPSTREAM_BRANCH" ] && UPSTREAM_BRANCH="main"
           echo "target_branch=$TARGET_BRANCH" >> "$GITHUB_OUTPUT"
           echo "upstream_branch=$UPSTREAM_BRANCH" >> "$GITHUB_OUTPUT"
 
@@ -70,6 +74,6 @@ jobs:
           TARGET="${{ steps.vars.outputs.target_branch }}"
           git push --force-with-lease "https://$TOKEN@github.com/$REPO.git" "HEAD:$TARGET"
 
-      - name: Optional: print result
+      - name: "Optional: print result"
         run: |
           echo "Successfully rebased ${{ steps.vars.outputs.target_branch }} onto upstream/${{ steps.vars.outputs.upstream_branch }} and pushed to origin."
