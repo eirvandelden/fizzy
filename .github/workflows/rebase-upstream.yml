@@ -1,0 +1,75 @@
+name: Rebase fork on upstream
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # daily at 03:00 UTC
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        description: "Branch to rebase (default: main)"
+        required: false
+        default: "main"
+      upstream_branch:
+        description: "Upstream branch to rebase onto (default: main)"
+        required: false
+        default: "main"
+
+permissions:
+  contents: write
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set variables
+        id: vars
+        run: |
+          TARGET_BRANCH="${{ github.event.inputs.target_branch || 'main' }}"
+          UPSTREAM_BRANCH="${{ github.event.inputs.upstream_branch || 'main' }}"
+          echo "target_branch=$TARGET_BRANCH" >> "$GITHUB_OUTPUT"
+          echo "upstream_branch=$UPSTREAM_BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Configure Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        env:
+          UPSTREAM_REPO: "https://github.com/basecamp/fizzy.git"
+        run: |
+          if ! git remote | grep -q "^upstream$"; then
+            git remote add upstream "$UPSTREAM_REPO"
+          fi
+          git remote -v
+
+      - name: Fetch upstream
+        run: |
+          git fetch upstream --prune
+
+      - name: Ensure local target branch exists
+        run: |
+          git checkout "${{ steps.vars.outputs.target_branch }}"
+
+      - name: Rebase onto upstream
+        run: |
+          set -e
+          git rebase "upstream/${{ steps.vars.outputs.upstream_branch }}"
+
+      - name: Push rebased branch to fork
+        env:
+          TOKEN: ${{ secrets.UPSTREAM_SYNC_TOKEN }}
+        run: |
+          set -e
+          REPO="${{ github.repository }}"
+          TARGET="${{ steps.vars.outputs.target_branch }}"
+          git push --force-with-lease "https://$TOKEN@github.com/$REPO.git" "HEAD:$TARGET"
+
+      - name: Optional: print result
+        run: |
+          echo "Successfully rebased ${{ steps.vars.outputs.target_branch }} onto upstream/${{ steps.vars.outputs.upstream_branch }} and pushed to origin."
