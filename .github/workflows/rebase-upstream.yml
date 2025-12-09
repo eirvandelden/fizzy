@@ -73,6 +73,7 @@ jobs:
           set -e
           REPO="${{ github.repository }}"
           TARGET="${{ steps.vars.outputs.target_branch }}"
+          git pull --rebase origin "$TARGET"
           git push --force-with-lease "https://$TOKEN@github.com/$REPO.git" "HEAD:$TARGET"
 
       - name: "Optional: print result"
