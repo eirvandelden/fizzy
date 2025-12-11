@@ -1,6 +1,6 @@
 require "test_helper"
 
-class MultiTenantTest < ActiveSupport::TestCase
+class Account::MultiTenantableTest < ActiveSupport::TestCase
   test "accepting_signups? is true when multi_tenant is enabled" do
     with_multi_tenant_mode(true) do
       assert Account.accepting_signups?

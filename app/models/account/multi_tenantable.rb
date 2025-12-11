@@ -1,4 +1,4 @@
-module MultiTenant
+module Account::MultiTenantable
   extend ActiveSupport::Concern
 
   included do
