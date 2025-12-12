@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 PORT=3006
+
 USE_TAILSCALE=0
 USE_PUSH=0
 FOREMAN_ARGS=()
