@@ -5,10 +5,28 @@ class Cards::PublishesController < ApplicationController
     @card.publish
 
     if add_another_param?
-      card = @board.cards.create!(status: :drafted)
-      redirect_to card_draft_path(card), notice: "Card added"
+      next_card = nil
+
+      begin
+        @board.account.with_lock do
+          next_card = @board.cards.create!(status: "drafted")
+        end
+      rescue ActiveRecord::RecordNotUnique
+        next_card = @board.cards.where(creator: Current.user, status: "drafted").order(created_at: :desc, id: :desc).first
+        next_card ||= @board.cards.create!(status: "drafted")
+      end
+
+      next_card.reload
+
+      respond_to do |format|
+        format.html { redirect_to next_card, notice: "Card added" }
+        format.turbo_stream { redirect_to next_card, notice: "Card added" }
+      end
     else
-      redirect_to @card.board
+      respond_to do |format|
+        format.html { redirect_to @card.board }
+        format.turbo_stream { redirect_to @card.board }
+      end
     end
   end
 
