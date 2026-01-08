@@ -14,16 +14,12 @@ export default class extends BridgeComponent {
     await nextFrame()
     this.startObserver()
     window.addEventListener("resize", this.windowResized)
-    window.addEventListener("turbo:submit-start", this.submitStart)
-    window.addEventListener("turbo:submit-end", this.submitEnd)
   }
 
   disconnect() {
     super.disconnect()
     this.stopObserver()
     window.removeEventListener("resize", this.windowResized)
-    window.removeEventListener("turbo:submit-start", this.submitStart)
-    window.removeEventListener("turbo:submit-end", this.submitEnd)
   }
 
   receive(message) {
@@ -76,14 +72,6 @@ export default class extends BridgeComponent {
     this.send("visibility", { title: this.title, elementVisible: visible })
   }
 
-  notifyBridgeOfSubmitStart() {
-    this.send("submitStart")
-  }
-
-  notifyBridgeOfSubmitEnd() {
-    this.send("submitEnd")
-  }
-
   // Intersection Observer
 
   startObserver() {
@@ -111,14 +99,6 @@ export default class extends BridgeComponent {
 
   windowResized = () => {
     this.updateObserverIfNeeded()
-  }
-
-  submitStart = () => {
-    this.notifyBridgeOfSubmitStart()
-  }
-
-  submitEnd = () => {
-    this.notifyBridgeOfSubmitEnd()
   }
 
   get title() {
