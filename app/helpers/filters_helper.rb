@@ -41,7 +41,7 @@ module FiltersHelper
   end
 
   def filter_title(title)
-    tag.strong title, class: "popup__title", tabindex: "-1", data: { dialog_focus_target: "touch" }
+    tag.strong title, class: "popup__title", tabindex: "-1", data: { dialog_target: "focusTouch" }
   end
 
   def collapsible_nav_section(title, **properties, &block)
