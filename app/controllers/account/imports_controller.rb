@@ -1,4 +1,4 @@
-class ImportsController < ApplicationController
+class Account::ImportsController < ApplicationController
   layout "public"
 
   disallow_account_scope only: %i[ new create ]
@@ -33,6 +33,6 @@ class ImportsController < ApplicationController
         import.process_later
       end
 
-      redirect_to import_path(import, script_name: account.slug)
+      redirect_to account_import_path(import, script_name: account.slug)
     end
 end

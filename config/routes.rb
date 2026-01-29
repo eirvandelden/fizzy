@@ -7,9 +7,8 @@ Rails.application.routes.draw do
     resource :join_code
     resource :settings
     resources :exports, only: [ :create, :show ]
+    resources :imports, only: [ :new, :create, :show ]
   end
-
-  resources :imports, only: %i[ new create show ]
 
   resources :users do
     scope module: :users do
