@@ -2,6 +2,7 @@ class ImportAccountDataJob < ApplicationJob
   include ActiveJob::Continuable
 
   queue_as :backend
+  discard_on Account::DataTransfer::RecordSet::IntegrityError
 
   def perform(import)
     step :check do |step|

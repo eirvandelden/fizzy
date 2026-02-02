@@ -8,7 +8,7 @@ class Account::Import < ApplicationRecord
 
   enum :status, %w[ pending processing completed failed ].index_by(&:itself), default: :pending
 
-  scope :expired, -> { where(completed_at: ...24.hours.ago) }
+  scope :expired, -> { where(completed_at: ...24.hours.ago).or(where(status: :failed, created_at: ...7.days.ago)) }
 
   def self.cleanup
     expired.destroy_all
@@ -26,6 +26,9 @@ class Account::Import < ApplicationRecord
         record_set.check(from: zip, start: last_id, callback: callback)
       end
     end
+  rescue => e
+    mark_as_failed
+    raise e
   end
 
   def process(start: nil, callback: nil)
