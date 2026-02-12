@@ -512,7 +512,7 @@ ActiveRecord::Schema[8.2].define(version: 2026_02_18_120000) do
     t.string "operation", limit: 255, null: false
     t.uuid "recordable_id"
     t.string "recordable_type", limit: 255
-    t.string "request_id", limit: 255
+    t.string "request_id"
     t.uuid "user_id"
     t.index ["account_id"], name: "index_storage_entries_on_account_id"
     t.index ["blob_id"], name: "index_storage_entries_on_blob_id"
