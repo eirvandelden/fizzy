@@ -1,17 +1,19 @@
 GIT
   remote: https://github.com/basecamp/audits1984
-  revision: c790eaec0716c8df56b3d0ab5bf5d75e3e1b0ed0
+  revision: 422b8ff25820c828b7cf09aff4923fd8cc2c6795
+  branch: flavorjones/coworker-api
   specs:
     audits1984 (0.1.7)
       console1984
       importmap-rails (>= 1.2.1)
+      jbuilder
       rinku
       rouge
       turbo-rails
 
 GIT
   remote: https://github.com/basecamp/console1984
-  revision: 02b1b9ee7fd7050174b6a98c2b43057553621dc4
+  revision: 23419ec8861e73f12ced75a3fc559d03f7be5854
   specs:
     console1984 (0.2.2)
       irb (~> 1.13)
@@ -21,9 +23,9 @@ GIT
 
 GIT
   remote: https://github.com/basecamp/lexxy
-  revision: 7c197c0afc7095c89df9cb6e24484df9e7212ac8
+  revision: 4bcf8d0213971560e90734493f8bd835addc3642
   specs:
-    lexxy (0.1.24.beta)
+    lexxy (0.7.4.beta)
       rails (>= 8.0.2)
 
 GIT
@@ -225,7 +227,7 @@ GEM
     benchmark (0.5.0)
     bigdecimal (4.0.1)
     bindex (0.8.1)
-    bootsnap (1.20.1)
+    bootsnap (1.21.1)
       msgpack (~> 1.2)
     brakeman (7.1.2)
       racc
@@ -568,7 +570,7 @@ GEM
     timeout (0.6.0)
     trilogy (2.9.0)
     tsort (0.2.0)
-    turbo-rails (2.0.20)
+    turbo-rails (2.0.21)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
     tzinfo (2.0.6)
@@ -626,6 +628,7 @@ GEM
       railties
       yabeda (~> 0.8)
     zeitwerk (2.7.4)
+    zip_kit (6.3.4)
 
 PLATFORMS
   aarch64-linux
@@ -676,7 +679,6 @@ DEPENDENCIES
   rouge
   rqrcode
   rubocop-rails-omakase
-  rubyzip
   selenium-webdriver
   sentry-rails
   sentry-ruby
@@ -703,6 +705,7 @@ DEPENDENCIES
   yabeda-prometheus-mmap
   yabeda-puma-plugin
   yabeda-rails
+  zip_kit
 
 BUNDLED WITH
    2.7.2

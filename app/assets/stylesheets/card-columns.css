@@ -232,7 +232,7 @@
     overflow-y: auto;
 
     .is-expanded & {
-      padding: var(--column-padding);
+      padding: var(--column-padding) var(--column-padding) calc(var(--column-padding) + var(--custom-safe-inset-bottom));
 
       /* Use the rest of the column height for scrolling */
       @media (max-width: 639px) {
@@ -378,6 +378,7 @@
   }
 
   .cards__menu {
+    position: relative;
     z-index: var(--z-popup);
   }
 
@@ -535,16 +536,33 @@
     /* Set lower limit for font size */
     font-size: clamp(0.6rem, 0.85cqi, 100px);
 
-    .card__comments {
-      --column-gap: 0.8ch;
+    .card__counts {
+      --gap: 0.5ch;
 
+      align-items: flex-end;
       display: flex;
-      margin-block-end: calc(var(--block-space) * -1.7);
-      margin-inline-end: calc(var(--card-padding-inline) * -0.5);
+      flex-shrink: 0;
+      gap: calc(2 * var(--gap));
+      margin-inline: auto calc(var(--card-padding-inline) * -0.5);
+      padding-inline-start: var(--gap);
+    }
 
-      .icon {
-        --icon-size: 1.6em;
+    .card__boosts,
+    .card__comments {
+      --icon-size: 1.6em;
 
+      align-items: center;
+      display: flex;
+      flex-shrink: 0;
+      font-weight: 600;
+      gap: var(--gap);
+
+      img {
+        block-size: var(--icon-size);
+        inline-size: var(--icon-size);
+      }
+
+      .icon--comment {
         color: var(--card-color);
       }
     }
@@ -583,18 +601,35 @@
       .local-time-value {
         font-weight: inherit;
       }
+
+      @media (max-width: 639px) {
+        inline-size: auto;
+      }
     }
 
-    .card:has(.card__background img:not([src=""])) {
+    &:has(.card__background img:not([src=""])) {
       .card__content,
       .card__meta,
+      .card__boosts,
+      .card__comments,
       .card__column-name:not(.card__column-name--current) {
         opacity: 0;
         transition: opacity 0.2s ease-in-out;
+      }
 
-        @media (any-hover: hover) {
-          .card:hover & {
+      @media (any-hover: hover) {
+        &:hover {
+          .card__content,
+          .card__footer,
+          .card__boosts,
+          .card__comments,
+          .card__column-name:not(.card__column-name--current) {
             opacity: 1;
+          }
+
+          .card__background img {
+            filter: blur(3px) brightness(1.2);
+            opacity: 0.2;
           }
         }
       }
@@ -603,13 +638,6 @@
     .bubble {
       inset-inline-start: 100%;
       translate: -90% -40%;
-    }
-
-    @media (any-hover: hover) {
-      .card:has(.card__background img:not([src=""])):hover .card__background img:not([src=""]) {
-        filter: blur(3px) brightness(1.2);
-        opacity: 0.2;
-      }
     }
   }
 
