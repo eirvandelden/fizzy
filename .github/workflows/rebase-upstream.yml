@@ -57,11 +57,19 @@ jobs:
           git checkout "${{ steps.vars.outputs.target_branch }}"
 
       - name: Rebase onto upstream
+        id: rebase
         run: |
           set -e
-          git rebase "upstream/${{ steps.vars.outputs.upstream_branch }}"
+          if git rebase "upstream/${{ steps.vars.outputs.upstream_branch }}"; then
+            echo "rebase_status=success" >> "$GITHUB_OUTPUT"
+          else
+            echo "rebase_status=failed" >> "$GITHUB_OUTPUT"
+            git rebase --abort
+            exit 1
+          fi
 
       - name: Push rebased branch to fork
+        if: steps.rebase.outputs.rebase_status == 'success'
         env:
           TOKEN: ${{ secrets.UPSTREAM_SYNC_TOKEN }}
         run: |
@@ -70,6 +78,72 @@ jobs:
           TARGET="${{ steps.vars.outputs.target_branch }}"
           git push --force-with-lease "https://$TOKEN@github.com/$REPO.git" "HEAD:$TARGET"
 
-      - name: Optional: print result
+      - name: Create issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '🚨 Automated rebase failed';
+            const body = `The automated rebase of \`${{ steps.vars.outputs.target_branch }}\` onto \`upstream/${{ steps.vars.outputs.upstream_branch }}\` has failed.
+
+            **Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            This likely means there are merge conflicts that need manual resolution.
+
+            To resolve:
+            1. Manually rebase your fork: \`git rebase upstream/${{ steps.vars.outputs.upstream_branch }}\`
+            2. Resolve any conflicts
+            3. Force push: \`git push --force-with-lease origin ${{ steps.vars.outputs.target_branch }}\`
+
+            Once resolved, this issue will be automatically closed on the next successful rebase.`;
+
+            // Check if there's already an open issue about rebase failures
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'automated-rebase-failure'
+            });
+
+            if (issues.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['automated-rebase-failure']
+              });
+            }
+
+      - name: Close rebase failure issues on success
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'automated-rebase-failure'
+            });
+
+            for (const issue of issues.data) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: '✅ Automated rebase succeeded. Closing this issue.'
+              });
+            }
+
+      - name: Print result
+        if: success()
         run: |
-          echo "Successfully rebased ${{ steps.vars.outputs.target_branch }} onto upstream/${{ steps.vars.outputs.upstream_branch }} and pushed to origin."
+          echo "✅ Successfully rebased ${{ steps.vars.outputs.target_branch }} onto upstream/${{ steps.vars.outputs.upstream_branch }} and pushed to origin."

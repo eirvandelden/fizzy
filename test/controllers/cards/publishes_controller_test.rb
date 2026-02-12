@@ -30,4 +30,49 @@ class Cards::PublishesControllerTest < ActionDispatch::IntegrationTest
     assert new_card.drafted?
     assert_redirected_to card_draft_path(new_card)
   end
+
+  test "concurrent create and add another should not cause duplicate card numbers" do
+    card = cards(:logo)
+    board = card.board
+    user = users(:kevin)
+    account = board.account
+    initial_count = Card.count
+
+    # Simulate concurrent "add another" requests
+    threads = 5.times.map do |i|
+      Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection do
+          # Set Current.user for this thread context
+          Current.user = user
+          Current.account = account
+
+          # Create a draft card, publish it, then add another (simulating the controller flow)
+          draft = board.cards.create!(status: "drafted")
+          draft.publish
+
+          # Simulate the "add another" request - this may hit RecordNotUnique
+          attempts = 0
+          begin
+            attempts += 1
+            board.cards.create!(status: "drafted")
+          rescue ActiveRecord::RecordNotUnique
+            retry if attempts < 3
+            raise
+          end
+        ensure
+          Current.user = nil
+          Current.account = nil
+        end
+      end
+    end
+
+    threads.each(&:join)
+
+    # We should have created 10 new cards total (5 published + 5 drafts)
+    assert_equal initial_count + 10, Card.count
+
+    # All cards should have unique numbers within the account
+    numbers = account.cards.pluck(:number)
+    assert_equal numbers.uniq.size, numbers.size, "Card numbers should be unique"
+  end
 end
