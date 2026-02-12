@@ -255,6 +255,52 @@
         inset: auto 0 3rem auto;
         scale: 75%;
       }
+
+      @media (max-width: 639px) {
+        font-size: var(--text-x-small);
+      }
+    }
+
+    .reactions {
+      --reaction-size: var(--btn-size);
+
+      align-self: flex-end;
+      display: flex;
+      gap: 0.5ch;
+      grid-area: reactions;
+      margin-inline-start: auto;
+
+      &:has(.reaction) {
+        --padding: calc(var(--card-padding-block) / 2);
+        --reaction-size: 1.6875rem;
+
+        margin-block: var(--padding) calc(-1 * var(--padding));
+        padding-block-start: var(--padding);
+        position: relative;
+
+        &:before {
+          border-block-start: 1px dashed color-mix(in srgb, transparent, var(--card-color) 33%);
+          content: "";
+          inset: 0 calc(-1 * var(--card-padding-inline)) auto;
+          position: absolute;
+        }
+      }
+
+      &:not(:has(.reaction)) {
+        position: static;
+
+        .reactions__trigger {
+          --btn-border-color: var(--color-ink-light);
+        }
+      }
+    }
+
+    .reaction__popup.popup {
+      inline-size: max-content;
+    }
+
+    .card__zoom-bg-btn {
+      grid-area: bg-zoom;
     }
 
     .card__footer {
