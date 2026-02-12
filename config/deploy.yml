@@ -2,57 +2,72 @@
 service: fizzy
 image: fizzy
 
-
 #-- About your deployment --#
 
 # Where to deploy fizzy
 servers:
   web:
-    - fizzy.example.com  # Set your server name here
+    - 192.168.1.216
 
 # How you connect to your server
 ssh:
-  user: root  # If you use a different username to SSH to your server, specify it here
+  user: root # If you use a different username to SSH to your server, specify it here
 
 # Automatic SSL
 proxy:
-  ssl: true                # Set this to false if you *don't* want SSL
-  host: fizzy.example.com  # Set your server name here to use automatic SSL
+  ssl: false
+  hosts:
+    - tasks.vandelden.family
+  forward_headers: true
+  app_port: 3000
+  healthcheck:
+    path: /up
+    interval: 2
+    timeout: 2
 
 # Your application configuration (secrets come from .kamal/secrets).
 env:
   secret:
+    - RAILS_MASTER_KEY
     - SECRET_KEY_BASE
     - VAPID_PUBLIC_KEY
     - VAPID_PRIVATE_KEY
+    - SMTP_ADDRESS
     - SMTP_USERNAME
     - SMTP_PASSWORD
   clear:
-    BASE_URL: https://fizzy.example.com # The public URL of your Fizzy instance
-    MAILER_FROM_ADDRESS: support@example.com # The email "from" address that Fizzy sends email from
+    BASE_URL: https://tasks.vandelden.family # The public URL of your Fizzy instance
+    MAILER_FROM_ADDRESS: mail@vandelden.family # The email "from" address that Fizzy sends email from
     SMTP_ADDRESS: mail.example.com # The SMTP server you'll use to send email
-    MULTI_TENANT: false # Set to true to allow multiple accounts to sign up
+    MULTI_TENANT: false # Set to false to enable single-tenant mode
     SOLID_QUEUE_IN_PUMA: true # Run background jobs in the app container
-
+    APP_NAME: Fizzy
+    REGISTRY_HTTP_ADDR: registry.vandelden.family
 
 #-- General configuration --#
 
 # Use a local registry to deploy
 registry:
-  server: localhost:5555
+  server: registry.vandelden.family
+  username: root
+  password:
+    - KAMAL_REGISTRY_PASSWORD # Always use an access token rather than real password (pulled from .kamal/secrets).
 
 # Handy aliases for interacting with your deployment. For eaxmple: `bin/kamal console` will connect to a
 # Rails console in production.
+
+# Handy aliases
 aliases:
   console: app exec --interactive --reuse "bin/rails console"
   shell: app exec --interactive --reuse "bash"
   logs: app logs -f
   dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"
+  apps: server exec docker exec kamal-proxy kamal-proxy list
 
 # Use a persistent storage volume for sqlite database files and local Active Storage files.
 # Recommended to change this to a mounted volume path that is backed up off server.
 volumes:
-  - "fizzy_storage:/rails/storage"
+  - "/home/app_storage/fizzy/storage:/rails/storage"
 
 # Bridge fingerprinted assets, like JS and CSS, between versions to avoid
 # hitting 404 on in-flight requests. Combines all files from new and old
@@ -62,3 +77,10 @@ asset_path: /rails/public/assets
 # Configure the image builder.
 builder:
   arch: amd64
+  remote: ssh://root@192.168.1.128
+  local: false
+  context: "."
+  args:
+    RUBY_VERSION: <%= File.read('.ruby-version').strip %>
+
+deploy_timeout: 20

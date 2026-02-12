@@ -28,9 +28,13 @@ jobs:
 
       - name: Set variables
         id: vars
+        shell: bash
         run: |
-          TARGET_BRANCH="${{ github.event.inputs.target_branch || 'main' }}"
-          UPSTREAM_BRANCH="${{ github.event.inputs.upstream_branch || 'main' }}"
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          UPSTREAM_BRANCH="${{ github.event.inputs.upstream_branch }}"
+          # Fallback to defaults if inputs are empty (e.g., scheduled runs)
+          [ -z "$TARGET_BRANCH" ] && TARGET_BRANCH="main"
+          [ -z "$UPSTREAM_BRANCH" ] && UPSTREAM_BRANCH="main"
           echo "target_branch=$TARGET_BRANCH" >> "$GITHUB_OUTPUT"
           echo "upstream_branch=$UPSTREAM_BRANCH" >> "$GITHUB_OUTPUT"
 
@@ -48,13 +52,14 @@ jobs:
           fi
           git remote -v
 
-      - name: Fetch upstream
+      - name: Fetch all remotes and update origin
         run: |
+          # Fetch and prune both remotes
+          git fetch origin --prune
           git fetch upstream --prune
-
-      - name: Ensure local target branch exists
-        run: |
+          # Ensure local branch matches remote
           git checkout "${{ steps.vars.outputs.target_branch }}"
+          git reset --hard origin/"${{ steps.vars.outputs.target_branch }}"
 
       - name: Rebase onto upstream
         id: rebase
@@ -76,6 +81,7 @@ jobs:
           set -e
           REPO="${{ github.repository }}"
           TARGET="${{ steps.vars.outputs.target_branch }}"
+          git pull --rebase origin "$TARGET"
           git push --force-with-lease "https://$TOKEN@github.com/$REPO.git" "HEAD:$TARGET"
 
       - name: Create issue on failure

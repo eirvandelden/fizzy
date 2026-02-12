@@ -6,9 +6,16 @@ class Cards::PublishesController < ApplicationController
 
     if add_another_param?
       next_card = create_draft_card_with_retry
-      redirect_to card_draft_path(next_card), notice: "Card added"
+
+      respond_to do |format|
+        format.html { redirect_to card_draft_path(next_card), notice: "Card added" }
+        format.turbo_stream { redirect_to card_draft_path(next_card), notice: "Card added" }
+      end
     else
-      redirect_to @card.board
+      respond_to do |format|
+        format.html { redirect_to @card.board }
+        format.turbo_stream { redirect_to @card.board }
+      end
     end
   end
 
