@@ -8,19 +8,19 @@ class Boards::EntropiesControllerTest < ActionDispatch::IntegrationTest
 
   test "update" do
     assert_no_difference -> { Current.account.entropy.reload.auto_postpone_period } do
-      put board_entropy_path(@board, format: :turbo_stream), params: { board: { auto_postpone_period: 123.days } }
+      put board_entropy_path(@board, format: :turbo_stream), params: { board: { auto_postpone_period_in_days: 90 } }
 
-      assert_equal 123.days, @board.entropy.reload.auto_postpone_period
+      assert_equal 90.days, @board.entropy.reload.auto_postpone_period
 
       assert_turbo_stream action: :replace, target: dom_id(@board, :entropy)
     end
   end
 
   test "update as JSON" do
-    put board_entropy_path(@board), params: { board: { auto_postpone_period: 99.days } }, as: :json
+    put board_entropy_path(@board), params: { board: { auto_postpone_period_in_days: 90 } }, as: :json
 
     assert_response :no_content
-    assert_equal 99.days, @board.entropy.reload.auto_postpone_period
+    assert_equal 90.days, @board.entropy.reload.auto_postpone_period
   end
 
   test "update requires board admin permission" do
@@ -28,9 +28,18 @@ class Boards::EntropiesControllerTest < ActionDispatch::IntegrationTest
 
     original_period = @board.entropy.auto_postpone_period
 
-    put board_entropy_path(@board, format: :turbo_stream), params: { board: { auto_postpone_period: 1.day } }
+    put board_entropy_path(@board, format: :turbo_stream), params: { board: { auto_postpone_period_in_days: 7 } }
 
     assert_response :forbidden
+    assert_equal original_period, @board.entropy.reload.auto_postpone_period
+  end
+
+  test "update rejects invalid auto_postpone_period" do
+    original_period = @board.entropy.auto_postpone_period
+
+    put board_entropy_path(@board, format: :turbo_stream), params: { board: { auto_postpone_period_in_days: 1 } }
+
+    assert_response :unprocessable_entity
     assert_equal original_period, @board.entropy.reload.auto_postpone_period
   end
 end

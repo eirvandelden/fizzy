@@ -1,4 +1,6 @@
 class Account::EntropiesController < ApplicationController
+  wrap_parameters :entropy, include: [ :auto_postpone_period_in_days ]
+
   before_action :ensure_admin
 
   def update
@@ -8,10 +10,12 @@ class Account::EntropiesController < ApplicationController
       format.html { redirect_to account_settings_path, notice: "Account updated" }
       format.json { head :no_content }
     end
+  rescue ActiveRecord::RecordInvalid
+    head :unprocessable_entity
   end
 
   private
     def entropy_params
-      params.expect(entropy: [ :auto_postpone_period ])
+      params.expect(entropy: [ :auto_postpone_period_in_days ])
     end
 end

@@ -39,17 +39,17 @@ class FlatJsonParamsTest < ActionDispatch::IntegrationTest
   test "update board entropy with flat JSON" do
     board = boards(:writebook)
 
-    put board_entropy_path(board), params: { auto_postpone_period: 99.days }, as: :json
+    put board_entropy_path(board), params: { auto_postpone_period_in_days: 90 }, as: :json
 
     assert_response :no_content
-    assert_equal 99.days, board.entropy.reload.auto_postpone_period
+    assert_equal 90.days, board.entropy.reload.auto_postpone_period
   end
 
   test "update account entropy with flat JSON" do
-    put account_entropy_path, params: { auto_postpone_period: 2.days }, as: :json
+    put account_entropy_path, params: { auto_postpone_period_in_days: 7 }, as: :json
 
     assert_response :no_content
-    assert_equal 2.days, Current.account.entropy.reload.auto_postpone_period
+    assert_equal 7.days, Current.account.entropy.reload.auto_postpone_period
   end
 
   test "create push subscription with flat JSON" do
