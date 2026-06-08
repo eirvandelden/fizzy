@@ -35,7 +35,11 @@ jobs:
             -f branch="${{ steps.vars.outputs.target_branch }}")
           merge_type=$(echo "$response" | jq -r '.merge_type')
           echo "merge_type=$merge_type" >> "$GITHUB_OUTPUT"
-          echo "Sync result: $merge_type"
+          if [ "$merge_type" = "none" ]; then
+            echo "Already up to date."
+          else
+            echo "Sync result: $merge_type"
+          fi
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -64,7 +68,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open',
-              labels: 'automated-rebase-failure'
+              labels: 'automated-sync-failure'
             });
 
             if (issues.data.length === 0) {
@@ -73,7 +77,7 @@ jobs:
                 repo: context.repo.repo,
                 title: title,
                 body: body,
-                labels: ['automated-rebase-failure']
+                labels: ['automated-sync-failure']
               });
             }
 
@@ -86,7 +90,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open',
-              labels: 'automated-rebase-failure'
+              labels: 'automated-sync-failure'
             });
 
             for (const issue of issues.data) {
