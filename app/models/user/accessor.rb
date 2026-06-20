@@ -12,8 +12,14 @@ module User::Accessor
   end
 
   def draft_new_card_in(board)
-    board.cards.find_or_initialize_by(creator: self, status: "drafted").tap do |card|
-      card.update!(created_at: Time.current, updated_at: Time.current, last_active_at: Time.current)
+    retries = 0
+    begin
+      board.cards.find_or_initialize_by(creator: self, status: "drafted").tap do |card|
+        card.update!(created_at: Time.current, updated_at: Time.current, last_active_at: Time.current)
+      end
+    rescue ActiveRecord::RecordNotUnique
+      retry if (retries += 1) <= 3
+      raise
     end
   end
 
