@@ -90,6 +90,11 @@ class Card < ApplicationRecord
     end
 
     def assign_number
-      self.number ||= account.increment!(:cards_count).cards_count
+      if self.number.nil?
+        Account.transaction do
+          account.increment!(:cards_count)
+          self.number = account.cards_count
+        end
+      end
     end
 end
