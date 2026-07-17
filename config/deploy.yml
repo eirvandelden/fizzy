@@ -35,6 +35,7 @@ env:
     - SMTP_ADDRESS
     - SMTP_USERNAME
     - SMTP_PASSWORD
+    - CAMPFIRE_WEBHOOK_URL
   clear:
     BASE_URL: https://tasks.vandelden.family # The public URL of your Fizzy instance
     MAILER_FROM_ADDRESS: mail@vandelden.family # The email "from" address that Fizzy sends email from
