@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-if Rails.env.production?
+if Rails.env.production? && (webhook_url = ENV["CAMPFIRE_WEBHOOK_URL"]).present?
   ExceptionNotification::Once::Campfire.install!(
-    webhook_url: ENV.fetch("CAMPFIRE_WEBHOOK_URL"),
+    webhook_url: webhook_url,
     app_name: ENV.fetch("APP_NAME", Rails.application.class.module_parent_name),
     background: :active_job
   )
