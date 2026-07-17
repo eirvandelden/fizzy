@@ -11,6 +11,14 @@ GIT
     useragent (0.16.11)
 
 GIT
+  remote: https://github.com/eirvandelden/exception_notification-campfire-once.git
+  revision: 8472c724465015c8e2d9ed4535c5e6e2c9bb817a
+  branch: main
+  specs:
+    exception_notification-campfire-once (0.1.0.pre.git.8472c72)
+      exception_notification (>= 5.0)
+
+GIT
   remote: https://github.com/hotwired/turbo-rails.git
   revision: 93ce5bc461cd71af1797e79fcd7e09a19242d080
   branch: offline-cache
@@ -225,6 +233,9 @@ GEM
     erubi (1.13.1)
     et-orbi (1.4.0)
       tzinfo
+    exception_notification (5.0.1)
+      actionmailer (>= 7.1, < 9)
+      activesupport (>= 7.1, < 9)
     faker (3.8.0)
       i18n (>= 1.8.11, < 2)
     ffi (1.17.4-aarch64-linux-gnu)
@@ -341,23 +352,9 @@ GEM
       net-protocol
     net-ssh (7.3.2)
     nio4r (2.7.5)
-    nokogiri (1.19.1-x86_64-linux-gnu)
-      racc (~> 1.4)
-    nokogiri (1.19.4-aarch64-linux-gnu)
-      racc (~> 1.4)
-    nokogiri (1.19.4-aarch64-linux-musl)
-      racc (~> 1.4)
-    nokogiri (1.19.4-arm-linux-gnu)
-      racc (~> 1.4)
-    nokogiri (1.19.4-arm-linux-musl)
-      racc (~> 1.4)
     nokogiri (1.19.4-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.4-x86_64-darwin)
-      racc (~> 1.4)
     nokogiri (1.19.4-x86_64-linux-gnu)
-      racc (~> 1.4)
-    nokogiri (1.19.4-x86_64-linux-musl)
       racc (~> 1.4)
     openssl (4.0.0)
     ostruct (0.6.3)
@@ -490,9 +487,7 @@ GEM
     strscan (3.1.8)
     thor (1.5.0)
     thruster (0.1.21)
-    thruster (0.1.21-aarch64-linux)
     thruster (0.1.21-arm64-darwin)
-    thruster (0.1.21-x86_64-darwin)
     thruster (0.1.21-x86_64-linux)
     timeout (0.6.1)
     trilogy (2.12.6)
@@ -536,6 +531,8 @@ DEPENDENCIES
   bundler-audit
   capybara
   debug
+  exception_notification (>= 5.0)
+  exception_notification-campfire-once!
   faker
   geared_pagination (~> 1.2)
   image_processing (~> 1.14)
