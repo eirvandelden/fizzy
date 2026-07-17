@@ -3,6 +3,8 @@ source "https://rubygems.org"
 git_source(:bc) { |repo| "https://github.com/basecamp/#{repo}" }
 
 gem "rails", github: "rails/rails", branch: "main"
+gem "exception_notification", ">= 5.0"
+gem "exception_notification-campfire-once", github: "eirvandelden/exception_notification-campfire-once", branch: "main"
 
 # Assets & front end
 gem "importmap-rails"
