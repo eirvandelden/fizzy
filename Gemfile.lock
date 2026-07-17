@@ -6,10 +6,10 @@ GIT
 
 GIT
   remote: https://github.com/eirvandelden/exception_notification-campfire-once.git
-  revision: 792e397c1e969f573267d839feb2d946e4689628
-  branch: ai/reykjavik
+  revision: 8472c724465015c8e2d9ed4535c5e6e2c9bb817a
+  branch: main
   specs:
-    exception_notification-campfire-once (0.1.0.pre.git.792e397)
+    exception_notification-campfire-once (0.1.0.pre.git.8472c72)
       exception_notification (>= 5.0)
 
 GIT
