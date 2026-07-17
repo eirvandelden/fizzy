@@ -11,7 +11,7 @@ class Account::DataTransfer::ActionTextRichTextRecordSet < Account::DataTransfer
   ].freeze
 
   def initialize(account)
-    super(account: account, model: ActionText::RichText)
+    super(account: account, model: ActionText::RichText, importable_model_names: %w[ActionText::RichText Card Comment Board])
   end
 
   private
