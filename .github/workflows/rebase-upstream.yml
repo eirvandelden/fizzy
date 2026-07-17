@@ -33,7 +33,7 @@ jobs:
           set -e
           response=$(gh api repos/${{ github.repository }}/merge-upstream \
             --method POST \
-            -f branch="${{ steps.vars.outputs.target_branch }}")
+            -f branch="$TARGET_BRANCH")
           merge_type=$(echo "$response" | jq -r '.merge_type')
           echo "merge_type=$merge_type" >> "$GITHUB_OUTPUT"
           if [ "$merge_type" = "none" ]; then
@@ -43,14 +43,18 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ github.token }}
+          TARGET_BRANCH: ${{ steps.vars.outputs.target_branch }}
 
       - name: Create issue on failure
         if: failure()
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b  # v7.1.0
+        env:
+          TARGET_BRANCH: ${{ steps.vars.outputs.target_branch }}
         with:
           script: |
             const title = '🚨 Automated upstream sync failed';
-            const body = `The automated sync of \`${{ steps.vars.outputs.target_branch }}\` with upstream has failed.
+            const targetBranch = process.env.TARGET_BRANCH;
+            const body = `The automated sync of \`${targetBranch}\` with upstream has failed.
 
             **Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
@@ -61,7 +65,7 @@ jobs:
             2. Fetch upstream: \`git fetch upstream\`
             3. Merge or rebase: \`git merge upstream/main\` (or \`git rebase upstream/main\`)
             4. Resolve any conflicts
-            5. Push: \`git push origin ${{ steps.vars.outputs.target_branch }}\`
+            5. Push: \`git push origin ${targetBranch}\`
 
             Once resolved, this issue will be automatically closed on the next successful sync.`;
 
@@ -112,5 +116,8 @@ jobs:
 
       - name: Print result
         if: success()
+        env:
+          TARGET_BRANCH: ${{ steps.vars.outputs.target_branch }}
+          MERGE_TYPE: ${{ steps.sync.outputs.merge_type }}
         run: |
-          echo "✅ Successfully synced ${{ steps.vars.outputs.target_branch }} with upstream (merge_type: ${{ steps.sync.outputs.merge_type }})."
+          echo "✅ Successfully synced $TARGET_BRANCH with upstream (merge_type: $MERGE_TYPE)."
