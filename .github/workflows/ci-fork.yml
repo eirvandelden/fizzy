@@ -1,0 +1,15 @@
+name: CI (fork)
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (OSS)
+    uses: ./.github/workflows/test.yml
+    with:
+      saas: false
