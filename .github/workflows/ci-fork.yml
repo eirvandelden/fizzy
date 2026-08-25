@@ -2,6 +2,7 @@ name: CI (fork)
 
 on:
   push:
+  workflow_dispatch:
 
 permissions:
   contents: read
