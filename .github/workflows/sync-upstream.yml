@@ -1,0 +1,83 @@
+name: Sync fork with upstream
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # daily at 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_REPO: https://github.com/basecamp/fizzy.git
+  UPSTREAM_BRANCH: main
+  CONFLICT_BRANCH: upstream-sync
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # zizmor: ignore[artipacked] -- credentials needed for git push # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Merge upstream into this fork
+        id: merge
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git remote add upstream "$UPSTREAM_REPO"
+          git fetch upstream "$UPSTREAM_BRANCH":refs/remotes/upstream/"$UPSTREAM_BRANCH"
+
+          if git merge-base --is-ancestor upstream/"$UPSTREAM_BRANCH" HEAD; then
+            echo "result=up-to-date" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if git merge --no-edit upstream/"$UPSTREAM_BRANCH"; then
+            git push origin HEAD:"$GITHUB_REF_NAME"
+            echo "result=merged" >> "$GITHUB_OUTPUT"
+          else
+            git merge --abort
+            echo "result=conflict" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open a pull request to resolve the conflict by hand
+        if: steps.merge.outputs.result == 'conflict'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          git push --force-with-lease origin upstream/"$UPSTREAM_BRANCH":refs/heads/"$CONFLICT_BRANCH"
+
+          if [ -n "$(gh pr list --head "$CONFLICT_BRANCH" --base "$BASE_BRANCH" --state open --json number --jq '.[].number')" ]; then
+            echo "Pull request already open; refreshed $CONFLICT_BRANCH with upstream's latest."
+            exit 0
+          fi
+
+          gh pr create \
+            --base "$BASE_BRANCH" \
+            --head "$CONFLICT_BRANCH" \
+            --title "Sync with upstream" \
+            --body "Upstream changes conflict with this fork, so the daily sync could not merge them on its own. Resolve the conflicts here and merge."
+
+      - name: Report what happened
+        env:
+          RESULT: ${{ steps.merge.outputs.result }}
+        run: |
+          case "$RESULT" in
+            up-to-date) echo "Already up to date with upstream." ;;
+            merged)     echo "Merged upstream and pushed." ;;
+            conflict)   echo "Upstream conflicts with this fork; opened a pull request to resolve by hand." ;;
+          esac
