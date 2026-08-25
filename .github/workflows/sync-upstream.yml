@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 
@@ -50,6 +51,18 @@ jobs:
             git merge --abort
             echo "result=conflict" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Test the merge and rebuild the image
+        if: steps.merge.outputs.result == 'merged'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          # A push made with the built-in token raises no events, so ask for the
+          # runs by hand. Dispatching is the one thing the token may still trigger.
+          gh workflow run ci-fork.yml --ref "$GITHUB_REF_NAME"
+          gh workflow run publish-image.yml --ref "$GITHUB_REF_NAME"
 
       - name: Open a pull request to resolve the conflict by hand
         if: steps.merge.outputs.result == 'conflict'
