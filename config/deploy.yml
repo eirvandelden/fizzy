@@ -43,6 +43,8 @@ env:
     SOLID_QUEUE_IN_PUMA: true # Run background jobs in the app container
     APP_NAME: Fizzy
     REGISTRY_HTTP_ADDR: registry.vandelden.family
+    WEB_CONCURRENCY: 2
+    JOB_CONCURRENCY: 1
 
 #-- General configuration --#
 
