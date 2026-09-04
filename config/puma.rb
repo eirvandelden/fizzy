@@ -41,11 +41,18 @@ unless Rails.env.local?
 
   # Defer major GC (full marking phase) until after request handling,
   # and perform major GC deferred during request handling.
-  before_worker_boot do
-    GC.config(rgengc_allow_full_mark: false)
-  end
+  #
+  # This trade-off assumes workers get idle time between bursts to run
+  # out_of_band, which holds for SaaS but not for a low-concurrency
+  # self-hosted instance whose workers rarely idle -- there, deferred
+  # major GC just keeps deferring and memory grows unbounded.
+  if Fizzy.saas?
+    before_worker_boot do
+      GC.config(rgengc_allow_full_mark: false)
+    end
 
-  out_of_band do
-    GC.start if GC.latest_gc_info(:need_major_by)
+    out_of_band do
+      GC.start if GC.latest_gc_info(:need_major_by)
+    end
   end
 end
