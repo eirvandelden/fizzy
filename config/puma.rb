@@ -9,8 +9,10 @@ plugin :tmp_restart
 
 # Only production configures a queue database, so a local supervisor dies on the missing
 # solid_queue_recurring_tasks and takes Puma down with it.
+# Async mode runs Solid Queue as threads in the Puma master: it saves memory, not throughput.
 unless Fizzy.saas? || Rails.env.local? || ENV["SOLID_QUEUE_IN_PUMA"] == "false"
   plugin :solid_queue
+  solid_queue_mode :async
 end
 
 # Expose Prometheus metrics at http://0.0.0.0:9394/metrics (SaaS only).
