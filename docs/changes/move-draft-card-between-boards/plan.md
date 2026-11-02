@@ -57,7 +57,6 @@ ER: not affected. Columns and committed indexes do not change. Only the version 
 
 ```ruby
 class RemoveBoardCreatorDraftedIndexFromCards < ActiveRecord::Migration[8.2]
-  #: () -> void
   def up
     remove_index :cards, name: "index_cards_on_board_creator_drafted", if_exists: true
   end
@@ -76,6 +75,8 @@ Test class `RemoveBoardCreatorDraftedIndexFromCardsTest < ActiveSupport::TestCas
   - `migrate_up` — finds the migration by class name in `connection_pool.migration_context.migrations`, fails the test when it is missing, and runs `migrate(:up)` inside `ActiveRecord::Migration.suppress_messages`. The lookup is lazy, so a missing migration fails only these tests, not the suite load.
   - `drafted_card_index?` — `connection.index_name_exists?(:cards, "index_cards_on_board_creator_drafted")`.
   - `kevin_drafts_on_writebook_and_private` — `users(:kevin).draft_new_card_in(boards(:writebook))` and `users(:kevin).draft_new_card_in(boards(:private))`, the production path.
+
+Departure: the migration carries no `#:` comment, because the repository's rubocop (Layout/LeadingCommentSpace) rejects it and upstream style has none.
 
 Not checked: Fizzy has no Steep or rbs_rails setup; the `#:` comments document the types only.
 
