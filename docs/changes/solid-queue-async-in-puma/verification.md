@@ -1,13 +1,10 @@
 # Verification: Run Solid Queue in async mode inside Puma
 
-Run on 2026-11-02, macOS, from the worktree, with `bin/rails server -p 3999` (no Thruster, no kamal-proxy).
-Environment variables are the ones in `plan.md` step 2 (before) and step 5 (after).
-Scratch databases: `storage/production*.sqlite3`, proven absent before the run and deleted after it.
+Run on 2026-11-02, macOS, from the worktree, with `bin/rails server -p 3999` (no Thruster, no kamal-proxy). Environment variables are the ones in `plan.md` step 2 (before) and step 5 (after). Scratch databases: `storage/production*.sqlite3`, proven absent before the run and deleted after it.
 
 ## Guard
 
-`ls storage/production*.sqlite3*` printed nothing before `db:prepare`.
-`db:prepare` created the four production SQLite files and loaded the schema. Its seed step then aborted with "Seeding is just for development!", which is expected in production and left the schema intact.
+`ls storage/production*.sqlite3*` printed nothing before `db:prepare`. `db:prepare` created the four production SQLite files and loaded the schema. Its seed step then aborted with "Seeding is just for development!", which is expected in production and left the schema intact.
 
 ## Before (fork mode, `WEB_CONCURRENCY=2`)
 
@@ -36,8 +33,7 @@ Seven Ruby processes, about 509 MB RSS in total. SIGTERM stopped everything clea
 30233 30066  39424 puma: cluster worker 0
 ```
 
-Two Ruby processes, about 242 MB RSS in total. No `solid-queue-supervisor`, `-dispatcher`, `-scheduler` or `-worker` process, and the worker has no children.
-RSS on macOS shifts as memory compresses (a later sample of the master read 65 MB), so treat these as indicative. The container on Linux is the real measure.
+Two Ruby processes, about 242 MB RSS in total. No `solid-queue-supervisor`, `-dispatcher`, `-scheduler` or `-worker` process, and the worker has no children. RSS on macOS shifts as memory compresses (a later sample of the master read 65 MB), so treat these as indicative. The container on Linux is the real measure.
 
 Job enqueued from a separate `bin/rails runner`, id `850a9169-9611-4a24-ac0c-a4cbc4f084d6`. Log line, pid `30066` equals the master:
 
@@ -61,10 +57,16 @@ I, [2026-11-02T14:54:41.097012 #30066]  INFO -- : [ActiveJob] [DeleteUnusedTagsJ
 
 `SolidQueue::Record.connection_pool.size`: `10`.
 
-SIGTERM: the log shows `Release claimed jobs`, shutdown of the dispatcher, scheduler and worker, `Supervisor terminated gracefully (170.8ms)` and `Exiting`, in about 1 s. The master was gone afterwards and the process listing was empty. `SolidQueue::Process.count` afterwards: `0`.
-The server's own exit status was not captured, because the shell tool launched it as a detached background job. Its graceful-shutdown log and absence from `ps` stand in for it.
-A search of `tmp/verify-after.log` for `ConnectionTimeoutError`, `Exception` and `Error` found no hit.
+SIGTERM: the log shows `Release claimed jobs`, shutdown of the dispatcher, scheduler and worker, `Supervisor terminated gracefully (170.8ms)` and `Exiting`, in about 1 s. The master was gone afterwards and the process listing was empty. `SolidQueue::Process.count` afterwards: `0`. The server's own exit status was not captured, because the shell tool launched it as a detached background job. Its graceful-shutdown log and absence from `ps` stand in for it. A search of `tmp/verify-after.log` for `ConnectionTimeoutError`, `Exception` and `Error` found no hit.
 
 ## Checks
 
-See the commit message and the implementation report for the test and linter output.
+Run on 2026-11-02 in this worktree at `b6fe4182c`:
+
+- `bin/rails test test/puma_config_test.rb`: `1 tests, 8 assertions, 0 failures, 0 errors, 0 skips`.
+- `bin/rails test -f`: `1792 tests, 6810 assertions, 0 failures, 0 errors, 5 skips`.
+- `bin/rubocop config/puma.rb`: `1 file inspected, no offenses detected`.
+- `bin/brakeman --quiet --no-pager --exit-on-warn --exit-on-error`: `Security Warnings: 0`, `No warnings found`.
+- `config/deploy.yml` parses as YAML after ERB.
+- `bin/rails test:system` (implementation run): 42 tests, 1 failure in `column_pagination_refresh_test.rb`; it passes alone on rerun.
+- Not caused by this change: `bin/rubocop` over the whole repository reports offenses in files this diff does not touch, and `bin/bundler-audit check --update` reports advisories for gems this diff does not touch.
