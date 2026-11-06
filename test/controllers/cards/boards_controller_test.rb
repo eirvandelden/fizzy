@@ -35,4 +35,24 @@ class Cards::BoardsControllerTest < ActionDispatch::IntegrationTest
     assert_equal card.title, json["title"]
     assert_equal new_board.id, json["board"]["id"]
   end
+
+  test "update moves a draft to a board where its creator has another draft" do
+    draft = users(:kevin).draft_new_card_in(boards(:writebook))
+    users(:kevin).draft_new_card_in(boards(:private))
+
+    put card_board_path(draft), params: { board_id: boards(:private).id }
+
+    assert_redirected_to draft
+    assert_equal boards(:private), draft.reload.board
+    assert_equal 2, boards(:private).cards.drafted.where(creator: users(:kevin)).count
+  end
+
+  test "update moves a draft to a board without a draft of its creator" do
+    draft = users(:kevin).draft_new_card_in(boards(:writebook))
+
+    put card_board_path(draft), params: { board_id: boards(:private).id }
+
+    assert_redirected_to draft
+    assert_equal boards(:private), draft.reload.board
+  end
 end
