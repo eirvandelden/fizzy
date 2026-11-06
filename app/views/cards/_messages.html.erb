@@ -1,5 +1,6 @@
 <%= messages_tag(card) do %>
   <% if card.published? %>
+    <%= render "cards/creation", card: card %>
     <%= render partial: "cards/comments/comment", collection: card.comments.preloaded.chronologically, cached: true %>
     <% if Fizzy.saas? %>
       <%= render "cards/comments/saas/new", card: card %>
