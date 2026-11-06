@@ -1,0 +1,17 @@
+<div id="<%= dom_id(card, :creation) %>" class="comment-by-system comment-by-system--creation">
+  <div class="comment align-start full-width">
+    <div class="comment__content flex flex-column flex-item-grow full-width">
+      <div class="comment__author flex align-center gap-half">
+        <h3 class="font-weight-normal txt-normal flex-item-justify-start min-width overflow-ellipsis">
+          <span class="comment__permalink-title">
+            <%= local_datetime_tag card.created_at, style: :date %>
+          </span>
+        </h3>
+      </div>
+
+      <div class="comment__body">
+        <strong>Created</strong> by <%= card.creator.name %>
+      </div>
+    </div>
+  </div>
+</div>

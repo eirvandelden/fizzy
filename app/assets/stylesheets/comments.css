@@ -206,7 +206,7 @@
   }
 
   /* Show the last system comment */
-  :nth-last-child(1 of .comment-by-system) {
+  :nth-last-child(1 of .comment-by-system:not(.comment-by-system--creation)) {
     display: contents;
 
     .comment__history {
@@ -215,7 +215,7 @@
   }
 
   /* Hide the "Show history" button if there's only one system comment */
-  :nth-child(1 of .comment-by-system) {
+  :nth-child(1 of .comment-by-system:not(.comment-by-system--creation)) {
     .comment__history {
       display: none;
     }
