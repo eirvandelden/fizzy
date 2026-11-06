@@ -63,6 +63,30 @@ class CardsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to card_draft_path(card)
   end
 
+  test "show renders the creation row from the card's created_at" do
+    card = cards(:logo)
+
+    get card_path(card)
+    assert_response :success
+
+    assert_select "#creation_card_#{card.id}" do
+      assert_select "time[data-local-time-target=date][datetime=?]", card.created_at.to_i.to_s
+      assert_select ".comment__body", text: "Created by David"
+    end
+  end
+
+  test "show renders the creation row before the system comments" do
+    card = cards(:logo)
+
+    get card_path(card)
+    assert_response :success
+
+    assert_select ".comment-by-system" do |rows|
+      assert_equal "creation_card_#{card.id}", rows.first["id"]
+    end
+    assert_select ".comment-by-system:not(.comment-by-system--creation)", count: card.comments.by_system.count
+  end
+
   test "show renders assign-to-me hotkey using self assignment path" do
     card = cards(:logo)
 
